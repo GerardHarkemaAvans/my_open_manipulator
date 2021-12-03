@@ -1,8 +1,8 @@
 <package>
-  <name>my_behavior_flexbe_behaviors</name>
+  <name>my_behaviors</name>
   <version>1.0.0</version>
   <description>
-     my_behavior_flexbe_behaviors references all implemented behaviors.
+     my_behaviors references all implemented behaviors.
   </description>
   <maintainer email="todo@todo.com">TODO</maintainer>
   <license>BSD</license>

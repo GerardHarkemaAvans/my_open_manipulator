@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(my_behavior_flexbe_behaviors)
+project(my_behaviors)
 
 find_package(catkin REQUIRED)
 

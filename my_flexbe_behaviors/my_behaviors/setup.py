@@ -4,7 +4,7 @@ from distutils.core import setup
 from catkin_pkg.python_setup import generate_distutils_setup
 
 d = generate_distutils_setup(
-    packages = ['my_behavior_flexbe_behaviors'],
+    packages = ['my_behaviors'],
     package_dir = {'': 'src'}
 )
 
