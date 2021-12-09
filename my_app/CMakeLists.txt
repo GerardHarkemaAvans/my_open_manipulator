@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+    sensor_msgs
+    open_manipulator_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,9 +105,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES my_app
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs open_manipulator_msgs
 #  DEPENDS system_lib
 )
 
@@ -116,13 +118,19 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+ include
   ${catkin_INCLUDE_DIRS}
+    roscpp
+    sensor_msgs
+    open_manipulator_msgs
+
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/my_app.cpp
+#   src/my_app_node.cpp
+#   src/behavior/behavior.cpp
+#   src/states/state_template.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -133,7 +141,11 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/my_app_node.cpp)
+ add_executable(${PROJECT_NAME}
+   src/my_app_node.cpp
+   src/behavior/behavior.cpp
+   src/states/state_template.cpp
+ )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
