@@ -28,12 +28,14 @@ void behavior::stateCallback(const ros::TimerEvent&){
       break;
     case state_1:
       if(state1.execute() != state_template::busy){
-        state1.onEnter();
+        state1.onExit();
+        state2.onEnter();
         _state = state_2;
       }
       break;
     case state_2:
-      if(state1.execute() != state_template::busy){
+      if(state2.execute() != state_template::busy){
+        state2.onExit();
         _state = state_finshed;
       }
       break;
@@ -45,14 +47,21 @@ void behavior::stateCallback(const ros::TimerEvent&){
   }
 }
 
-void behavior::start(){
+void behavior::onEnter(){
   _state = state_start;
-  state_timer.start();
+}
+
+void behavior::onEnter(input_keys_ &input_keys){
+  user_data.input_keys = input_keys;
+  _state = state_start;
 }
 
 
+behavior::output_keys_ behavior::onExit(){
+  return(user_data.output_keys);
+}
+
 void behavior::abort(){
-  state_timer.stop();
   _state = state_abort;
 }
 
@@ -60,6 +69,6 @@ void behavior::reset(){
   _state = state_finshed;
 }
 
-behavior::status behavior::getStatus(){
-  return _status;
+behavior::outcomes behavior::execute(){
+  return _outcomes;
 }

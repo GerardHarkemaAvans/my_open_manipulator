@@ -9,7 +9,8 @@ bij een behavior.
 *******************************************************************************/
 #include "my_app/states/state_template.h"
 
-state_template::state_template(/* define own paramters here*/){
+state_template::state_template(const string & object_name/* define own paramters here*/){
+//  this.object_name = object_name;
 }
 
 state_template::~state_template(){
@@ -21,7 +22,7 @@ state_template::status state_template::onEnter(void){
   return(success);
 }
 
-state_template::status state_template::onEnter(input_keys_* input_keys){
+state_template::status state_template::onEnter(input_keys_& input_keys){
 
   state_ = state_template::running;
   user_data.input_keys = input_keys;
@@ -35,23 +36,13 @@ state_template::outcomes state_template::execute(void){
   return(done);
 }
 
-state_template::outcomes state_template::execute(output_keys_* output_keys){
+state_template::output_keys_ state_template::onExit(){
 
-  //output_keys = NULL;
-  state_ = state_template::idle;
-  output_keys = user_data.output_keys;
-  return(done);
-}
-
-state_template::status state_template::onExit(){
-
-  state_ = state_template::idle;
-  return(success);
+  return(user_data.output_keys);
 }
 
 state_template::status state_template::onStop(){
 
-  state_ = state_template::idle;
   return(success);
 }
 

@@ -9,9 +9,13 @@ bij een behavior.
 *******************************************************************************/
 #ifndef _STATE_TEMPLATE_H_
 #define _STATE_TEMPLATE_H_
+#include <string>
+
+using namespace std;
 
 class state_template{
 
+public:
   typedef enum{
     success = 0,
     error
@@ -25,6 +29,12 @@ class state_template{
     // append other errors here
   }state;
 
+  typedef enum{
+    busy = 0,
+    done,
+    failed
+    // append other outcomes here
+  }outcomes;
 
 
   typedef struct input_keys_struct{
@@ -38,35 +48,29 @@ class state_template{
   }output_keys_;
 
   typedef struct user_data_struct{
-    input_keys_* input_keys;
-    output_keys_* output_keys;
+    input_keys_ input_keys;
+    output_keys_ output_keys;
   }user_data_;
 
 protected:
   state  state_ = idle;
   user_data_ user_data = {0};
+  //string object_name;
+
+
 public:
-
-  typedef enum{
-    busy = 0,
-    done,
-    failed
-    // append other outcomes here
-  }outcomes;
-
   // constructor
-  state_template(/* define own paramters here*/);
+  state_template(const string & object_name/* define own paramters here*/);
   // destructor
   ~state_template();
 
   // Starten van de state
   status onEnter(void);
-  status onEnter(input_keys_* input_keys);
+  status onEnter(input_keys_& input_keys);
   // Executeren van de state, state is actief zolang outcome == busy
   outcomes execute(void);
-  outcomes execute(output_keys_* output_keys);
   // Einde van de state
-  status onExit(void);
+  output_keys_ onExit(void);
   // Afbeken van de state
   status onStop(void);
   // Tijdelijk de state stopzetten
