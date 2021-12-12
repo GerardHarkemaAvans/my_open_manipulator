@@ -9,9 +9,11 @@ bij een behavior.
 *******************************************************************************/
 #ifndef _STATE_TEMPLATE_H_
 #define _STATE_TEMPLATE_H_
+#include <iostream>
 #include <string>
 
 using namespace std;
+
 
 class state_template{
 
@@ -40,6 +42,7 @@ public:
   typedef struct input_keys_struct{
     int dummy;
     // append other keys here
+    int repeat_count; /* Example of key */
   }input_keys_;
 
   typedef struct output_keys_struct{
@@ -55,17 +58,18 @@ public:
 protected:
   state  state_ = idle;
   user_data_ user_data = {0};
-  //string object_name;
+  string state_object_name;
+
+  int remaining_count;
 
 
 public:
   // constructor
-  state_template(const string & object_name/* define own paramters here*/);
+  state_template(const std::string& state_object_name/* define own paramters here*/);
   // destructor
   ~state_template();
 
   // Starten van de state
-  status onEnter(void);
   status onEnter(input_keys_& input_keys);
   // Executeren van de state, state is actief zolang outcome == busy
   outcomes execute(void);

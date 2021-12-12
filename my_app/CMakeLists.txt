@@ -129,7 +129,7 @@ include_directories(
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/my_app_node.cpp
-#   src/behavior/behavior.cpp
+#   src/behavior/behavior_template.cpp
 #   src/states/state_template.cpp
 # )
 
@@ -143,7 +143,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}
    src/my_app_node.cpp
-   src/behavior/behavior.cpp
+   src/behavior/behavior_template.cpp
    src/states/state_template.cpp
  )
 
