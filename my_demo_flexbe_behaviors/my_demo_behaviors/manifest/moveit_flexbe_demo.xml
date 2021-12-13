@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="moveit_flexbe_demo">
+
+	<executable package_path="my_demo_behaviors.moveit_flexbe_demo_sm" class="moveit_flexbe_demoSM" />
+	<tagstring></tagstring>
+	<author>Gerard Harkema</author>
+	<date>December 12, 2021</date>
+	<description>
+		Demo of a behavior using moveit
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
