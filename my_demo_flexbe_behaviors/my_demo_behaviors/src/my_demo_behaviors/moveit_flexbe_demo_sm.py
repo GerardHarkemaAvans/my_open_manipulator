@@ -25,7 +25,7 @@ Created on December 12, 2021
 '''
 class moveit_flexbe_demoSM(Behavior):
 	'''
-	Demo of a behavior using moveit
+	Demo of a behavior using moveit for the open-manipulator robot
 	'''
 
 
@@ -50,18 +50,13 @@ class moveit_flexbe_demoSM(Behavior):
 		arm_group = 'arm'
 		joint_names = ['joint1', 'joint2', 'joint3', 'joint4']
 		action_topic = "move_group"
-		gripper_group = 'gripper'
 		# x:99 y:284, x:530 y:236
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.captured_pointcloud = []
-		_state_machine.userdata.part_pose = []
-		_state_machine.userdata.pick_configuration = []
 		_state_machine.userdata.offset = 0.01
 		_state_machine.userdata.rotation = 1.57
 		_state_machine.userdata.move_group_prefix = ''
 		_state_machine.userdata.move_group = "move_group"
 		_state_machine.userdata.ee_link = "end_effector_link"
-		_state_machine.userdata.world = "world"
 		_state_machine.userdata.frames = ["world" , "ik_testpoint"]
 
 		# Additional creation code can be added inside the following tags
@@ -81,7 +76,7 @@ class moveit_flexbe_demoSM(Behavior):
 			# x:297 y:24
 			OperatableStateMachine.add('GoLeft',
 										open_manipulator_moveit_flexbe_states__SrdfStateToMoveit(config_name='left', move_group=arm_group, action_topic=action_topic, robot_name="", tolerance=0.0),
-										transitions={'reached': 'getTransformFromTestpoint', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
+										transitions={'reached': 'getTransformFromIkTestpoint', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name', 'move_group': 'move_group', 'robot_name': 'robot_name', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
@@ -102,12 +97,12 @@ class moveit_flexbe_demoSM(Behavior):
 			# x:997 y:24
 			OperatableStateMachine.add('IkCalculateJointsFromPose',
 										IkGetJointsFromPose(joint_names=joint_names, time_out=5.0),
-										transitions={'continue': 'MoveToTestpoint', 'failed': 'failed', 'time_out': 'failed'},
+										transitions={'continue': 'MoveToIkTestpoint', 'failed': 'failed', 'time_out': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off, 'time_out': Autonomy.Off},
 										remapping={'move_group': 'move_group', 'move_group_prefix': 'move_group_prefix', 'tool_link': 'ee_link', 'pose': 'part_pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:1026 y:424
-			OperatableStateMachine.add('MoveToTestpoint',
+			OperatableStateMachine.add('MoveToIkTestpoint',
 										MoveitToJointsDynState(move_group=arm_group, action_topic=action_topic),
 										transitions={'reached': 'GoRight', 'planning_failed': 'failed', 'control_failed': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
@@ -121,7 +116,7 @@ class moveit_flexbe_demoSM(Behavior):
 										remapping={'message': 'part_pose'})
 
 			# x:570 y:24
-			OperatableStateMachine.add('getTransformFromTestpoint',
+			OperatableStateMachine.add('getTransformFromIkTestpoint',
 										GetTFTransformState(),
 										transitions={'done': 'PoseMessage', 'failed': 'failed'},
 										autonomy={'done': Autonomy.Off, 'failed': Autonomy.Off},
