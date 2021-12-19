@@ -6,18 +6,23 @@ Date: december 2021
 Purpose:
 Voorbeeld implementation van een state machine
 *******************************************************************************/
-#include "my_app/behavior/behavior_template.h"
+#include "my_app/behavior/behavior.h"
 
 int main(int argc, char **argv)
 {
   // Init ROS node
   ros::init(argc, argv, "behavior_node");
   ros::NodeHandle node_handle("");
+
+  // Start AsyncSpinner
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
   std::cout << "my_app started" << std::endl;
-  behavior_template my_behavior("my_behavior");
+  behavior my_behavior("my_behavior");
 
   {
-    behavior_template::input_keys_ input_key;
+    behavior::input_keys_ input_key;
     input_key.dummy = 0;
     my_behavior.onEnter(input_key);
   }

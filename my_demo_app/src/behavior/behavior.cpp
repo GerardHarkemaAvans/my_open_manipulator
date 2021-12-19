@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: behavior_template.cpp
+File: behavior.cpp
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -7,8 +7,7 @@ Purpose:
 Implementation (template) voor een behaivior definitie welke gebruikt kan worden
 bij een statemachine.
 *******************************************************************************/
-#include "my_app/behavior/behavior_template.h"
-#include "my_app/states/state_template.h"
+#include "my_app/behavior/behavior.h"
 
 #define DEBUG_LEVEL_NONE  0 // Nu Debugging
 #define DEBUG_LEVEL_1     1 // Own debug messages
@@ -19,7 +18,7 @@ bij een statemachine.
 #define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
 
 
-behavior_template::behavior_template(const std::string& behavior_object_name)
+behavior::behavior(const std::string& behavior_object_name)
 : node_handle(""),
   priv_node_handle("~")
 {
@@ -30,14 +29,10 @@ behavior_template::behavior_template(const std::string& behavior_object_name)
 #endif
 
   /* Write here your code */
-
-
-  state1 = new state_template("state1");
-  state2 = new state_template("state2");
-
-
+  string tmp = "srdf_to_moveit";
+  srdf_to_moveit = new state_srdf_to_moveit("arm");
   state_timer = node_handle.createTimer(ros::Duration(0.100)/*100ms*/,
-                                          &behavior_template::stateCallback,
+                                          &behavior::stateCallback,
                                           this);
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
@@ -47,7 +42,7 @@ behavior_template::behavior_template(const std::string& behavior_object_name)
 
 }
 
-behavior_template::~behavior_template()
+behavior::~behavior()
 {
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
@@ -62,35 +57,55 @@ behavior_template::~behavior_template()
 
 }
 
-void behavior_template::stateCallback(const ros::TimerEvent&){
+void behavior::stateCallback(const ros::TimerEvent&){
 
   switch(_state){
     case state_idle:
       break;
     case state_start:
       {
-        state_template::input_keys_ input_key;
-        input_key.dummy = 0;
-        input_key.repeat_count = 1;
-        state1->onEnter(input_key);
+        state_srdf_to_moveit::input_keys_ input_key;
+        input_key.config_name = "home";
+        srdf_to_moveit->onEnter(input_key);
       }
-      _state = state_1;
+      _state = go_home;
       break;
-    case state_1:
-      if(state1->execute() != state_template::busy){
-        state1->onExit();
+    case go_home:
+      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
+        srdf_to_moveit->onExit();
         {
-          state_template::input_keys_ input_key;
-          input_key.dummy = 0;
-          input_key.repeat_count = 3;
-          state2->onEnter(input_key);
+          state_srdf_to_moveit::input_keys_ input_key;
+          input_key.config_name = "left";
+          srdf_to_moveit->onEnter(input_key);
         }
-        _state = state_2;
+        _state = go_left;
       }
       break;
-    case state_2:
-      if(state2->execute() != state_template::busy){
-        state2->onExit();
+    case go_left:
+      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
+        srdf_to_moveit->onExit();
+        {
+          state_srdf_to_moveit::input_keys_ input_key;
+          input_key.config_name = "right";
+          srdf_to_moveit->onEnter(input_key);
+        }
+        _state = go_right;
+      }
+      break;
+    case go_right:
+      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
+        srdf_to_moveit->onExit();
+        {
+          state_srdf_to_moveit::input_keys_ input_key;
+          input_key.config_name = "resting";
+          srdf_to_moveit->onEnter(input_key);
+        }
+        _state = go_resting;
+      }
+      break;
+    case go_resting:
+      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
+        srdf_to_moveit->onExit();
         _state = state_finshed;
       }
       break;
@@ -102,7 +117,7 @@ void behavior_template::stateCallback(const ros::TimerEvent&){
   }
 }
 
-void behavior_template::onEnter(input_keys_ &input_keys){
+void behavior::onEnter(input_keys_ &input_keys){
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
   cout << "Entering "  << behavior_object_name << "::onEnter" << endl;
@@ -119,7 +134,7 @@ _state = state_start;
 
 }
 
-behavior_template::outcomes behavior_template::execute(){
+behavior::outcomes behavior::execute(){
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_3)
   cout << "Entering "  << behavior_object_name << "::execute" << endl;
@@ -133,7 +148,7 @@ behavior_template::outcomes behavior_template::execute(){
   return(_outcomes);
 }
 
-behavior_template::output_keys_ behavior_template::onExit(){
+behavior::output_keys_ behavior::onExit(){
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
   cout << "Entering "  << behavior_object_name << "::onExit" << endl;
@@ -147,7 +162,7 @@ behavior_template::output_keys_ behavior_template::onExit(){
   return(user_data.output_keys);
 }
 
-void behavior_template::abort(){
+void behavior::abort(){
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
   cout << "Entering "  << behavior_object_name << "::abort" << endl;
@@ -162,7 +177,7 @@ _state = state_abort;
 #endif
 }
 
-void behavior_template::reset(){
+void behavior::reset(){
 
 #if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
   cout << "Entering "  << behavior_object_name << "::reset" << endl;

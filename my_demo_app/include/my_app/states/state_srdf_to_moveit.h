@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: state_template.h
+File: state_srdf_to_moveit.h
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -7,16 +7,21 @@ Purpose:
 Interface header (template) voor een state definitie welke gebruikt kan worden
 bij een behavior.
 *******************************************************************************/
-#ifndef _STATE_TEMPLATE_H_
-#define _STATE_TEMPLATE_H_
+#ifndef _STATE_SRDF_TO_MOVEIT_H_
+#define _STATE_SRDF_TO_MOVEIT_H_
 #include <iostream>
 #include <string>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit_msgs/ExecuteTrajectoryActionResult.h>
+//#include <moveit/robot_model_loader/robot_model_loader.h>
+//#include <moveit/planning_interface/planning_interface.h>
+//#include <moveit/planning_scene/planning_scene.h>
+//#include <boost/scoped_ptr.hpp>
 
 using namespace std;
 
 
-class state_template{
-
+class state_srdf_to_moveit{
 public:
   typedef enum{
     success = 0,
@@ -40,9 +45,8 @@ public:
 
 
   typedef struct input_keys_struct{
-    int dummy;
+    std::string config_name;
     // append other keys here
-    int repeat_count; /* Example of key */
   }input_keys_;
 
   typedef struct output_keys_struct{
@@ -59,15 +63,16 @@ protected:
   state  state_ = idle;
   user_data_ user_data;
   string state_object_name;
-
-  int remaining_count;
-
-
+//  robot_model::RobotModelPtr robot_model;
+//  robot_state::RobotState* robot_state;
+//  const robot_state::JointModelGroup* joint_model_group;
+  moveit::planning_interface::MoveGroupInterface* move_group;
+  robot_state::RobotStatePtr move_group_state;
 public:
   // constructor
-  state_template(const std::string& state_object_name/* define own paramters here*/);
+  state_srdf_to_moveit(const std::string& state_object_name);//, const std::string& group/* define own paramters here*/);
   // destructor
-  ~state_template();
+  ~state_srdf_to_moveit();
 
   // Starten van de state
   status onEnter(input_keys_& input_keys);
@@ -83,7 +88,6 @@ public:
   status onResume(void);
   // Stte van de toestand
   state getState(void);
-
 };
 
-#endif // _STATE_TEMPLATE_H_
+#endif // _STATE_SRDF_TO_MOVEIT_H_

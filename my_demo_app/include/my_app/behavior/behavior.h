@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: behavior_template.h
+File: behavior.h
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -10,6 +10,7 @@ worden bij een statemachine.
 #ifndef _BEHAVIOR_H_
 #define _BEHAVIOR_H_
 
+#include "my_app/states/state_srdf_to_moveit.h"
 #include "my_app/states/state_template.h"
 #include <ros/ros.h>
 #include <iostream>
@@ -17,7 +18,7 @@ worden bij een statemachine.
 
 using namespace std;
 
-class behavior_template{
+class behavior{
 
 public:
   typedef enum{
@@ -29,8 +30,10 @@ public:
     state_idle = 0,
     state_start,
     // add states here
-    state_1,
-    state_2,
+    go_home,
+    go_left,
+    go_right,
+    go_resting,
     state_finshed,
     state_abort
     // add states here
@@ -60,22 +63,20 @@ protected:
 
   string behavior_object_name;
 
-
   outcomes _outcomes = outcomes::status_busy;
   state _state = state::state_idle;
 
-  //const std::string state_1_1 = "state 1";
-  //const std::string state_2_1 = "state 2";
-  // enter here your states
-  state_template *state1;
-  state_template *state2;
+  // enter here your states type
+  state_srdf_to_moveit* srdf_to_moveit;
+  state_template* s_template;
+
 
   user_data_ user_data = {0};
 
 
 public:
-  behavior_template(const std::string& state_object_name);
-  ~behavior_template();
+  behavior(const std::string& state_object_name);
+  ~behavior();
 
   void onEnter();
   void onEnter(input_keys_ &input_keys);

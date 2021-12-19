@@ -11,13 +11,26 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-    sensor_msgs
-    open_manipulator_msgs
+  sensor_msgs
+  interactive_markers
+  moveit_core
+  moveit_visual_tools
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_ros_perception
+  pluginlib
+  geometric_shapes
+#  pcl_ros
+#  pcl_conversions
+  rosbag
+  tf2_ros
+  tf2_eigen
+  tf2_geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Eigen3 REQUIRED)
+find_package(Boost REQUIRED system filesystem date_time thread)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -107,8 +120,19 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES my_demo_app
-  CATKIN_DEPENDS roscpp rospy std_msgs open_manipulator_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS
+  roscpp
+  rospy
+  std_msgs
+  moveit_core
+  moveit_visual_tools
+  moveit_ros_planning_interface
+  interactive_markers
+  tf2_geometry_msgs
+  DEPENDS
+#  system_lib
+  EIGEN3
+
 )
 
 ###########
@@ -122,15 +146,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
     roscpp
     sensor_msgs
-    open_manipulator_msgs
+    ${Boost_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIRS}
 
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/my_demo_app_node.cpp
-#   src/behavior/behavior_template.cpp
-#   src/states/state_template.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -143,8 +165,13 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}
    src/my_demo_app_node.cpp
-   src/behavior/behavior_template.cpp
+   src/behavior/behavior.cpp
+   src/states/state_srdf_to_moveit.cpp
    src/states/state_template.cpp
+ )
+
+ add_executable(moveit_test
+   src/moveit_test.cpp
  )
 
 ## Rename C++ executable without prefix
@@ -160,6 +187,12 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}
    ${catkin_LIBRARIES}
+   ${Boost_LIBRARIES}
+ )
+
+ target_link_libraries(moveit_test
+   ${catkin_LIBRARIES}
+   ${Boost_LIBRARIES}
  )
 
 #############
