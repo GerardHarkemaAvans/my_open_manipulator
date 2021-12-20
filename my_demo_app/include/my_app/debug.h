@@ -13,4 +13,4 @@
   do { if(enable)fprintf(stderr, "file: %s\nline: %d\nfunction :%s(): \n" fmt, __FILE__, \
     __LINE__, __func__, __VA_ARGS__); } while (0)
 
-#endif _DEBUG_H_
+#endif // _DEBUG_H_

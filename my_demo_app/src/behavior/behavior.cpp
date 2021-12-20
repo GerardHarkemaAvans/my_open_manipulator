@@ -9,7 +9,7 @@ bij een statemachine.
 *******************************************************************************/
 #include "my_app/behavior/behavior.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
+#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_2
 
 
 behavior::behavior(const std::string& behavior_object_name)
@@ -23,6 +23,7 @@ behavior::behavior(const std::string& behavior_object_name)
   /* Write here your code */
   string tmp = "srdf_to_moveit";
   srdf_to_moveit = new state_srdf_to_moveit("arm");
+  get_tf_transform = new state_get_tf_transform("get_tf_transform");
   state_timer = node_handle.createTimer(ros::Duration(0.100)/*100ms*/,
                                           &behavior::stateCallback,
                                           this);
@@ -35,7 +36,7 @@ behavior::~behavior()
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", behavior_object_name.c_str());
 
-/* Write here your code */
+  /* Write here your code */
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::destructor\n", behavior_object_name.c_str());
 }
@@ -70,14 +71,29 @@ void behavior::stateCallback(const ros::TimerEvent&){
       if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
         srdf_to_moveit->onExit();
         {
-          state_srdf_to_moveit::input_keys_ input_key;
-          input_key.config_name = "right";
-          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
-          ROS_INFO("Executing go_right");
+          state_get_tf_transform::input_keys_ input_key;
+          input_key.target_frame = "world" ;
+          input_key.source_frame = "ik_testpoint";
+          if(get_tf_transform->onEnter(input_key)){_state = state_failed; break;}
+          ROS_INFO("Executing get transform");
         }
-        _state = go_right;
+        _state = get_transform;
       }
       break;
+      case get_transform:
+        if(get_tf_transform->execute() != state_get_tf_transform::busy){
+          get_tf_transform->onExit();
+          {
+            state_srdf_to_moveit::input_keys_ input_key;
+            input_key.config_name = "right";
+            if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+            ROS_INFO("Executing go_right");
+          }
+          _state = go_right;
+        }
+        break;
+
+
     case go_right:
       if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
         srdf_to_moveit->onExit();
@@ -130,7 +146,7 @@ behavior::outcomes behavior::execute(){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", behavior_object_name.c_str());
 
-/* Write here your code */
+  /* Write here your code */
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", behavior_object_name.c_str());
   return(_outcomes);
@@ -140,7 +156,7 @@ behavior::output_keys_ behavior::onExit(){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", behavior_object_name.c_str());
 
-/* Write here your code */
+  /* Write here your code */
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onExit\n", behavior_object_name.c_str());
   return(user_data.output_keys);
@@ -150,9 +166,9 @@ void behavior::abort(){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::abort\n", behavior_object_name.c_str());
 
-/* Write here your code */
+  /* Write here your code */
 
-_state = state_abort;
+  _state = state_abort;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::abort\n", behavior_object_name.c_str());
 }

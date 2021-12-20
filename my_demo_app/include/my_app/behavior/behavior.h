@@ -11,6 +11,7 @@ worden bij een statemachine.
 #define _BEHAVIOR_H_
 
 #include "my_app/states/state_srdf_to_moveit.h"
+#include "my_app/states/state_get_tf_transform.h"
 #include "my_app/states/state_template.h"
 #include "my_app/debug.h"
 #include <ros/ros.h>
@@ -35,6 +36,7 @@ public:
     go_home,
     go_left,
     go_right,
+    get_transform,
     go_resting,
     state_finshed,
     state_failed,
@@ -72,6 +74,7 @@ protected:
 
   // enter here your states type
   state_srdf_to_moveit* srdf_to_moveit;
+  state_get_tf_transform* get_tf_transform;
   state_template* s_template;
 
 

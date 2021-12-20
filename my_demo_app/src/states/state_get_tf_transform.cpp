@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: state_template.cpp
+File: state_get_tf_transform.cpp
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -7,11 +7,11 @@ Purpose:
 Implementation (template) voor een state definitie welke gebruikt kan worden
 bij een behavior.
 *******************************************************************************/
-#include "my_app/states/state_template.h"
+#include "my_app/states/state_get_tf_transform.h"
 
 #define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
 
-state_template::state_template(const std::string& state_object_name/* define own paramters here*/){
+state_get_tf_transform::state_get_tf_transform(const std::string& state_object_name/* define own paramters here*/){
   this->state_object_name = state_object_name;
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
 
@@ -20,7 +20,7 @@ state_template::state_template(const std::string& state_object_name/* define own
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::construcor\n", state_object_name.c_str());
 }
 
-state_template::~state_template(){
+state_get_tf_transform::~state_get_tf_transform(){
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", state_object_name.c_str());
 
     /* Write here your code */
@@ -29,40 +29,61 @@ state_template::~state_template(){
 }
 
 
-state_template::status state_template::onEnter(input_keys_& input_keys){
+state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& input_keys){
 
-  state_template::status return_code = success;
+  state_get_tf_transform::status return_code = success;
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
-  remaining_count = user_data.input_keys.repeat_count;
 
   /* Write here your code */
 
-  state_ = state_template::running;
+  state_ = state_get_tf_transform::running;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
 
-state_template::outcomes state_template::execute(void){
+state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
 
-  state_template::outcomes return_value = busy;
+  state_get_tf_transform::outcomes return_value = busy;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", state_object_name.c_str());
 
   /* Write here your code */
-  if(--remaining_count == 0){ /* Example */
+
+  tf2_ros::Buffer tfBuffer;
+  tf2_ros::TransformListener tfListener(tfBuffer);
+
+  geometry_msgs::TransformStamped transformStamped;
+  try{
+    transformStamped = tfBuffer.lookupTransform(user_data.input_keys.target_frame,
+                                                user_data.input_keys.source_frame,
+                                                ros::Time::now(),
+                                                ros::Duration(3.0));
+    user_data.output_keys.transform.pose.position.x = transformStamped.transform.translation.x;
+    user_data.output_keys.transform.pose.position.y = transformStamped.transform.translation.y;
+    user_data.output_keys.transform.pose.position.z = transformStamped.transform.translation.z;
+    user_data.output_keys.transform.pose.orientation.x = transformStamped.transform.rotation.x;
+    user_data.output_keys.transform.pose.orientation.y = transformStamped.transform.rotation.y;
+    user_data.output_keys.transform.pose.orientation.z = transformStamped.transform.rotation.z;
+    user_data.output_keys.transform.pose.orientation.w = transformStamped.transform.rotation.w;
+    user_data.output_keys.transform.header.frame_id = user_data.input_keys.target_frame;
+
     return_value = done;
-    state_ = state_template::idle;
   }
+  catch (tf2::TransformException &ex) {
+    ROS_ERROR("Falid to get transform");
+    return_value = failed;
+  }
+  state_ = state_get_tf_transform::idle;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
-state_template::output_keys_ state_template::onExit(){
+state_get_tf_transform::output_keys_ state_get_tf_transform::onExit(){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
 
@@ -72,9 +93,9 @@ state_template::output_keys_ state_template::onExit(){
   return(user_data.output_keys);
 }
 
-state_template::status state_template::onStop(){
+state_get_tf_transform::status state_get_tf_transform::onStop(){
 
-  state_template::status return_code = success;
+  state_get_tf_transform::status return_code = success;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -84,37 +105,37 @@ state_template::status state_template::onStop(){
   return(return_code);
 }
 
-state_template::status state_template::onPause(){
+state_get_tf_transform::status state_get_tf_transform::onPause(){
 
-  state_template::status return_code = success;
+  state_get_tf_transform::status return_code = success;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_template::paused;
+  state_ = state_get_tf_transform::paused;
 
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_template::status state_template::onResume(){
+state_get_tf_transform::status state_get_tf_transform::onResume(){
 
-  state_template::status return_code = success;
+  state_get_tf_transform::status return_code = success;
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_template::running;
+  state_ = state_get_tf_transform::running;
 
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_template::state state_template::getState(void){
+state_get_tf_transform::state state_get_tf_transform::getState(void){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::getState\n", state_object_name.c_str());
 
