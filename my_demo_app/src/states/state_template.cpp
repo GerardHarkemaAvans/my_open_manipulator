@@ -9,12 +9,6 @@ bij een behavior.
 *******************************************************************************/
 #include "my_app/states/state_template.h"
 
-#define DEBUG_LEVEL_NONE  0 // Nu Debugging
-#define DEBUG_LEVEL_1     1 // Own debug messages
-#define DEBUG_LEVEL_2     2 // State debug messages
-#define DEBUG_LEVEL_3     3 // All state debug messages (not implemented yet!)
-
-
 #define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
 
 state_template::state_template(const std::string& state_object_name/* define own paramters here*/){

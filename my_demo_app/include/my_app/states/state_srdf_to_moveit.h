@@ -13,13 +13,9 @@ bij een behavior.
 #include <string>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit_msgs/ExecuteTrajectoryActionResult.h>
-//#include <moveit/robot_model_loader/robot_model_loader.h>
-//#include <moveit/planning_interface/planning_interface.h>
-//#include <moveit/planning_scene/planning_scene.h>
-//#include <boost/scoped_ptr.hpp>
+#include "my_app/debug.h"
 
 using namespace std;
-
 
 class state_srdf_to_moveit{
 public:
@@ -63,11 +59,9 @@ protected:
   state  state_ = idle;
   user_data_ user_data;
   string state_object_name;
-//  robot_model::RobotModelPtr robot_model;
-//  robot_state::RobotState* robot_state;
-//  const robot_state::JointModelGroup* joint_model_group;
   moveit::planning_interface::MoveGroupInterface* move_group;
   robot_state::RobotStatePtr move_group_state;
+
 public:
   // constructor
   state_srdf_to_moveit(const std::string& state_object_name);//, const std::string& group/* define own paramters here*/);

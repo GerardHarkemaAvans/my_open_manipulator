@@ -11,6 +11,7 @@ bij een behavior.
 #define _STATE_TEMPLATE_H_
 #include <iostream>
 #include <string>
+#include "my_app/debug.h"
 
 using namespace std;
 

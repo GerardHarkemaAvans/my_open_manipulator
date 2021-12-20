@@ -12,6 +12,7 @@ worden bij een statemachine.
 
 #include "my_app/states/state_srdf_to_moveit.h"
 #include "my_app/states/state_template.h"
+#include "my_app/debug.h"
 #include <ros/ros.h>
 #include <iostream>
 #include <string>
@@ -23,7 +24,8 @@ class behavior{
 public:
   typedef enum{
     status_busy = 0,
-    status_finshed
+    status_finshed,
+    status_failed
   }outcomes;
 
   typedef enum{
@@ -35,7 +37,9 @@ public:
     go_right,
     go_resting,
     state_finshed,
-    state_abort
+    state_failed,
+    state_abort,
+    state_wait_for_reset
     // add states here
   }state;
 

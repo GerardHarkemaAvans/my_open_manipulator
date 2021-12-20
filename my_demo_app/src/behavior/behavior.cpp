@@ -9,13 +9,7 @@ bij een statemachine.
 *******************************************************************************/
 #include "my_app/behavior/behavior.h"
 
-#define DEBUG_LEVEL_NONE  0 // Nu Debugging
-#define DEBUG_LEVEL_1     1 // Own debug messages
-#define DEBUG_LEVEL_2     2 // Behavior debug messages
-#define DEBUG_LEVEL_3     3 // All Behavior debug messages
-
-
-#define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
+#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
 
 
 behavior::behavior(const std::string& behavior_object_name)
@@ -24,9 +18,7 @@ behavior::behavior(const std::string& behavior_object_name)
 {
 
   this->behavior_object_name = behavior_object_name;
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::construcor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", behavior_object_name.c_str());
 
   /* Write here your code */
   string tmp = "srdf_to_moveit";
@@ -35,26 +27,17 @@ behavior::behavior(const std::string& behavior_object_name)
                                           &behavior::stateCallback,
                                           this);
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::construcor" << endl;
-#endif
-
-
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::construcor\n", behavior_object_name.c_str());
 }
 
 behavior::~behavior()
 {
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::destrucor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", behavior_object_name.c_str());
 
 /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::destrucor" << endl;
-#endif
-
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::destructor\n", behavior_object_name.c_str());
 }
 
 void behavior::stateCallback(const ros::TimerEvent&){
@@ -66,7 +49,8 @@ void behavior::stateCallback(const ros::TimerEvent&){
       {
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "home";
-        srdf_to_moveit->onEnter(input_key);
+        if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+        ROS_INFO("Executing go_home");
       }
       _state = go_home;
       break;
@@ -76,7 +60,8 @@ void behavior::stateCallback(const ros::TimerEvent&){
         {
           state_srdf_to_moveit::input_keys_ input_key;
           input_key.config_name = "left";
-          srdf_to_moveit->onEnter(input_key);
+          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+          ROS_INFO("Executing go_left");
         }
         _state = go_left;
       }
@@ -87,7 +72,8 @@ void behavior::stateCallback(const ros::TimerEvent&){
         {
           state_srdf_to_moveit::input_keys_ input_key;
           input_key.config_name = "right";
-          srdf_to_moveit->onEnter(input_key);
+          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+          ROS_INFO("Executing go_right");
         }
         _state = go_right;
       }
@@ -98,7 +84,8 @@ void behavior::stateCallback(const ros::TimerEvent&){
         {
           state_srdf_to_moveit::input_keys_ input_key;
           input_key.config_name = "resting";
-          srdf_to_moveit->onEnter(input_key);
+          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+          ROS_INFO("Executing go_resting");
         }
         _state = go_resting;
       }
@@ -109,8 +96,17 @@ void behavior::stateCallback(const ros::TimerEvent&){
         _state = state_finshed;
       }
       break;
+    case state_failed:
+      ROS_INFO("Ending with outcome failed");
+      _outcomes = outcomes::status_failed;
+      _state = state_wait_for_reset;
+    break;
     case state_finshed:
+      ROS_INFO("Ending with outcome finsihed");
       _outcomes = outcomes::status_finshed;
+      _state = state_wait_for_reset;
+      break;
+    case state_wait_for_reset:
       break;
     default:
       break;
@@ -119,75 +115,56 @@ void behavior::stateCallback(const ros::TimerEvent&){
 
 void behavior::onEnter(input_keys_ &input_keys){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::onEnter" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", behavior_object_name.c_str());
 
-/* Write here your code */
+  /* Write here your code */
 
-user_data.input_keys = input_keys;
-_state = state_start;
+  user_data.input_keys = input_keys;
+  ROS_INFO("Starting");
+  _state = state_start;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::onEnter" << endl;
-#endif
-
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onEnter\n", behavior_object_name.c_str());
 }
 
 behavior::outcomes behavior::execute(){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_3)
-  cout << "Entering "  << behavior_object_name << "::execute" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", behavior_object_name.c_str());
 
 /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_3)
-  cout << "Leaving "  << behavior_object_name << "::execute" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", behavior_object_name.c_str());
   return(_outcomes);
 }
 
 behavior::output_keys_ behavior::onExit(){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::onExit" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", behavior_object_name.c_str());
 
 /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::onExit" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onExit\n", behavior_object_name.c_str());
   return(user_data.output_keys);
 }
 
 void behavior::abort(){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::abort" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::abort\n", behavior_object_name.c_str());
 
 /* Write here your code */
 
 _state = state_abort;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::abort" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::abort\n", behavior_object_name.c_str());
 }
 
 void behavior::reset(){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Entering "  << behavior_object_name << "::reset" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::reset\n", behavior_object_name.c_str());
 
+  ROS_INFO("Resetiing");
   /* Write here your code */
 
-  _state = state_finshed;
+  _state = state_idle;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_2)
-  cout << "Leaving "  << behavior_object_name << "::reset" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::reset\n", behavior_object_name.c_str());
 }

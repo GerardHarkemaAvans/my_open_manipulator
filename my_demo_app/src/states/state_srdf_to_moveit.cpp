@@ -9,55 +9,31 @@ bij een behavior.
 *******************************************************************************/
 #include "my_app/states/state_srdf_to_moveit.h"
 
-#define DEBUG_LEVEL_NONE  0 // Nu Debugging
-#define DEBUG_LEVEL_1     1 // Own debug messages
-#define DEBUG_LEVEL_2     2 // State debug messages
-#define DEBUG_LEVEL_3     3 // All state debug messages (not implemented yet!)
-
-
-#define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
+#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_1
 
 state_srdf_to_moveit::state_srdf_to_moveit(const std::string& state_object_name){//, const std::string& group/* define own paramters here*/){
 
   this->state_object_name = state_object_name;
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::construcor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
 
-
-//  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
-//  robot_model = robot_model_loader.getModel();
-  /* Create a RobotState and JointModelGroup to keep track of the current robot pose and planning group*/
-//  robot_state = new robot_state::RobotState(robot_model);
-//  robot_state::RobotStatePtr robot_state(new robot_state::RobotState(robot_model));
-//  joint_model_group = robot_state->getJointModelGroup(group);
-  move_group = new moveit::planning_interface::MoveGroupInterface("arm");//group);
-
+  move_group = new moveit::planning_interface::MoveGroupInterface("arm");
   move_group_state = move_group->getCurrentState(1.0);
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::construcor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::construcor\n", state_object_name.c_str());
 }
 
 state_srdf_to_moveit::~state_srdf_to_moveit(){
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::destrucor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destrucor\n", state_object_name.c_str());
 
     /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::destrucor" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_keys){
 
   state_srdf_to_moveit::status return_code = success;
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::onEnter" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
 
@@ -93,10 +69,7 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
     }
 
     move_group->setPathConstraints(constraints);
-
-
 #endif
-
 
     move_group->setMaxVelocityScalingFactor(0.5);
     move_group->setMaxAccelerationScalingFactor(0.5);
@@ -110,12 +83,13 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
       //move_group->execute(my_plan);
       move_group->asyncExecute(my_plan);
     }
+    else{
+      ROS_ERROR("Unable to start move_group");
+    }
 
   state_ = state_srdf_to_moveit::running;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::onEnter" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -124,9 +98,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
   state_srdf_to_moveit::outcomes return_value = busy;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::execute" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", state_object_name.c_str());
 
   // nog timeout inbouwen
   {
@@ -146,23 +118,17 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 	}
 
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::execute" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
 state_srdf_to_moveit::output_keys_ state_srdf_to_moveit::onExit(){
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::onExit" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
 
   /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::onExit" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onExit\n", state_object_name.c_str());
   return(user_data.output_keys);
 }
 
@@ -170,15 +136,11 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
 
   state_srdf_to_moveit::status return_code = success;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::onStop" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onStop\n", state_object_name.c_str());
 
     /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::onStop" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onStop\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -186,18 +148,13 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onPause(){
 
   state_srdf_to_moveit::status return_code = success;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::onPause" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_srdf_to_moveit::paused;
 
-
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::onPause" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -205,30 +162,21 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onResume(){
 
   state_srdf_to_moveit::status return_code = success;
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::onResume" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_srdf_to_moveit::running;
 
-
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::onResume" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
 state_srdf_to_moveit::state state_srdf_to_moveit::getState(void){
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Entering "  << state_object_name << "::getState" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
-#if (DEBUG_LEVEL >= DEBUG_LEVEL_1)
-  cout << "Leaving "  << state_object_name << "::getState" << endl;
-#endif
+  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::getState\n", state_object_name.c_str());
   return(state_);
 }
