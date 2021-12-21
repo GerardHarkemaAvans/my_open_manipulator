@@ -50,66 +50,98 @@ void behavior::stateCallback(const ros::TimerEvent&){
       {
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "home";
-        if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
+        state_srdf_to_moveit::output_keys_ output_key;
         ROS_INFO("Executing go_home");
-      }
-      _state = go_home;
-      break;
-    case go_home:
-      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
-        srdf_to_moveit->onExit();
-        {
-          state_srdf_to_moveit::input_keys_ input_key;
-          input_key.config_name = "left";
-          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
-          ROS_INFO("Executing go_left");
+        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
+          case state_srdf_to_moveit::busy:
+            /* Do nothing */
+            break;
+          case state_srdf_to_moveit::done:
+            _state = go_left;
+            break;
+          case state_srdf_to_moveit::failed:
+            _state = state_failed;
+            break;
         }
-        _state = go_left;
       }
       break;
     case go_left:
-      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
-        srdf_to_moveit->onExit();
-        {
-          state_get_tf_transform::input_keys_ input_key;
-          input_key.target_frame = "world" ;
-          input_key.source_frame = "ik_testpoint";
-          if(get_tf_transform->onEnter(input_key)){_state = state_failed; break;}
-          ROS_INFO("Executing get transform");
-        }
-        _state = get_transform;
+    {
+      state_srdf_to_moveit::input_keys_ input_key;
+      input_key.config_name = "left";
+      state_srdf_to_moveit::output_keys_ output_key;
+      ROS_INFO("Executing go_left");
+      switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
+        case state_srdf_to_moveit::busy:
+          /* Do nothing */
+          break;
+        case state_srdf_to_moveit::done:
+          _state = get_transform;
+          break;
+        case state_srdf_to_moveit::failed:
+          _state = state_failed;
+          break;
       }
-      break;
-      case get_transform:
-        if(get_tf_transform->execute() != state_get_tf_transform::busy){
-          get_tf_transform->onExit();
-          {
-            state_srdf_to_moveit::input_keys_ input_key;
-            input_key.config_name = "right";
-            if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
-            ROS_INFO("Executing go_right");
-          }
+    }
+    break;
+    case get_transform:
+    {
+      state_get_tf_transform::input_keys_ input_key;
+      input_key.target_frame = "world";
+      input_key.source_frame = "ik_testpoint";
+      state_get_tf_transform::output_keys_ output_key;
+      ROS_INFO("Executing get transform");
+      switch(get_tf_transform->simpleEexecute(input_key, output_key)){
+        case state_get_tf_transform::busy:
+          /* Do nothing */
+          break;
+        case state_get_tf_transform::done:
+          ROS_INFO("x = %f", output_key.transform.pose.position.x);
+          ROS_INFO("y = %f", output_key.transform.pose.position.y);
+          ROS_INFO("z = %f", output_key.transform.pose.position.z);
           _state = go_right;
-        }
-        break;
-
-
-    case go_right:
-      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
-        srdf_to_moveit->onExit();
-        {
-          state_srdf_to_moveit::input_keys_ input_key;
-          input_key.config_name = "resting";
-          if(srdf_to_moveit->onEnter(input_key)){_state = state_failed; break;}
-          ROS_INFO("Executing go_resting");
-        }
-        _state = go_resting;
+          break;
+        case state_get_tf_transform::failed:
+          _state = state_failed;
+          break;
       }
-      break;
+    }
+    case go_right:
+      {
+        state_srdf_to_moveit::input_keys_ input_key;
+        input_key.config_name = "right";
+        state_srdf_to_moveit::output_keys_ output_key;
+        ROS_INFO("Executing go_right");
+        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
+          case state_srdf_to_moveit::busy:
+            /* Do nothing */
+          break;
+          case state_srdf_to_moveit::done:
+          _state = go_resting;
+          break;
+          case state_srdf_to_moveit::failed:
+            _state = state_failed;
+          break;
+        }
+      }
+    break;
     case go_resting:
-      if(srdf_to_moveit->execute() != state_srdf_to_moveit::busy){
-        srdf_to_moveit->onExit();
-        _state = state_finshed;
+      {
+        state_srdf_to_moveit::input_keys_ input_key;
+        input_key.config_name = "resting";
+        state_srdf_to_moveit::output_keys_ output_key;
+        ROS_INFO("Executing go_resting");
+        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
+          case state_srdf_to_moveit::busy:
+            /* Do nothing */
+          break;
+          case state_srdf_to_moveit::done:
+            _state = state_finshed;
+            break;
+          case state_srdf_to_moveit::failed:
+            _state = state_failed;
+            break;
+        }
       }
       break;
     case state_failed:

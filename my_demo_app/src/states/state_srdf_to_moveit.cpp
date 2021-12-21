@@ -9,7 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #include "my_app/states/state_srdf_to_moveit.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_1
+#define DEBUG_LEVEL       DEBUG_LEVEL_1//DEBUG_LEVEL_NONE//DEBUG_LEVEL_1
 
 state_srdf_to_moveit::state_srdf_to_moveit(const std::string& state_object_name){//, const std::string& group/* define own paramters here*/){
 
@@ -121,6 +121,41 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
+
+
+/* do not modify this member function */
+state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+  outcomes return_value = busy;
+
+  switch(execution_state_){
+    case execution_wait_for_start:
+      {
+        status on_enter_status_ = onEnter(input_keys);
+        if(on_enter_status_ != success){
+          return_value = failed;
+          break;
+        }
+        execution_state_ = execution_execute;
+      }
+      break;
+    case execution_execute:
+      execution_return_value = execute();
+      if(execution_return_value != busy){
+        execution_state_ = execution_exit;
+      }
+      break;
+    case execution_exit:
+      output_keys = onExit();
+      return_value = execution_return_value;
+      execution_state_ = execution_wait_for_start;
+      break;
+    default:
+      break;
+
+  }
+  return(return_value);
+}
+
 
 state_srdf_to_moveit::output_keys_ state_srdf_to_moveit::onExit(){
 

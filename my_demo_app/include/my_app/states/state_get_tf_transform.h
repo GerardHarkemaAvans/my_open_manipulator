@@ -28,6 +28,13 @@ public:
   }status;
 
   typedef enum{
+    execution_wait_for_start = 0,
+    execution_execute,
+    execution_exit
+    // append other errors here
+  }execution_state;
+
+  typedef enum{
     idle = 0,
     running,
     paused
@@ -61,6 +68,8 @@ protected:
   state  state_ = idle;
   user_data_ user_data;
   string state_object_name;
+  execution_state execution_state_ = execution_wait_for_start;
+  outcomes execution_return_value;
 
 public:
   // constructor
@@ -72,6 +81,9 @@ public:
   status onEnter(input_keys_& input_keys);
   // Executeren van de state, state is actief zolang outcome == busy
   outcomes execute(void);
+
+  outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
+
   // Einde van de state
   output_keys_ onExit(void);
   // Afbeken van de state

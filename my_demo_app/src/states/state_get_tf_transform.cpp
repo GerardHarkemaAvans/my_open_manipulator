@@ -83,6 +83,39 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
   return(return_value);
 }
 
+/* do not modify this member function */
+state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+  outcomes return_value = busy;
+
+  switch(execution_state_){
+    case execution_wait_for_start:
+      {
+        status on_enter_status_ = onEnter(input_keys);
+        if(on_enter_status_ != success){
+          return_value = failed;
+          break;
+        }
+        execution_state_ = execution_execute;
+      }
+      break;
+    case execution_execute:
+      execution_return_value = execute();
+      if(execution_return_value != busy){
+        execution_state_ = execution_exit;
+      }
+      break;
+    case execution_exit:
+      output_keys = onExit();
+      return_value = execution_return_value;
+      execution_state_ = execution_wait_for_start;
+      break;
+    default:
+      break;
+
+  }
+  return(return_value);
+}
+
 state_get_tf_transform::output_keys_ state_get_tf_transform::onExit(){
 
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
