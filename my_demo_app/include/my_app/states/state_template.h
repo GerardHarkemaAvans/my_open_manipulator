@@ -9,6 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #ifndef _STATE_TEMPLATE_H_
 #define _STATE_TEMPLATE_H_
+#include <ros/ros.h>
 #include <iostream>
 #include <string>
 #include "my_app/debug.h"
@@ -64,6 +65,7 @@ public:
   }user_data_;
 
 protected:
+  ros::NodeHandle node_handle;
   state  state_ = idle;
   user_data_ user_data;
   string state_object_name;

@@ -21,9 +21,10 @@ behavior::behavior(const std::string& behavior_object_name)
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", behavior_object_name.c_str());
 
   /* Write here your code */
-  string tmp = "srdf_to_moveit";
-  srdf_to_moveit = new state_srdf_to_moveit("arm");
+  srdf_to_moveit = new state_srdf_to_moveit("srdf_to_moveit", "arm");
   get_tf_transform = new state_get_tf_transform("get_tf_transform");
+  ik_get_joints_from_pose = new state_ik_get_joints_from_pose("ik_get_joints_from_pose", "arm");
+
   state_timer = node_handle.createTimer(ros::Duration(0.100)/*100ms*/,
                                           &behavior::stateCallback,
                                           this);
@@ -96,16 +97,42 @@ void behavior::stateCallback(const ros::TimerEvent&){
           /* Do nothing */
           break;
         case state_get_tf_transform::done:
+          object_pose = output_key.transform;
           ROS_INFO("x = %f", output_key.transform.pose.position.x);
           ROS_INFO("y = %f", output_key.transform.pose.position.y);
           ROS_INFO("z = %f", output_key.transform.pose.position.z);
-          _state = go_right;
+          _state = ik_calculate_joits;
           break;
         case state_get_tf_transform::failed:
           _state = state_failed;
           break;
       }
     }
+    case ik_calculate_joits:
+    {
+      state_ik_get_joints_from_pose::input_keys_ input_key;
+      input_key.pose = object_pose;
+      input_key.tool_link = "end_effector_link";
+      input_key.offset = 0.0;
+      input_key.rotation = 1.57;
+      state_ik_get_joints_from_pose::output_keys_ output_key;
+      ROS_INFO("Executing get transform");
+      switch(ik_get_joints_from_pose->simpleEexecute(input_key, output_key)){
+        case state_ik_get_joints_from_pose::busy:
+          /* Do nothing */
+          break;
+        case state_ik_get_joints_from_pose::done:
+          _state = go_right;
+          break;
+        case state_ik_get_joints_from_pose::failed:
+          _state = state_failed;
+          break;
+      }
+    }
+
+
+
+
     case go_right:
       {
         state_srdf_to_moveit::input_keys_ input_key;

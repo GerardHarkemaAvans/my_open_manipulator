@@ -12,8 +12,12 @@ worden bij een statemachine.
 
 #include "my_app/states/state_srdf_to_moveit.h"
 #include "my_app/states/state_get_tf_transform.h"
+#include "my_app/states/state_ik_get_joints_from_pose.h"
 #include "my_app/states/state_template.h"
 #include "my_app/debug.h"
+
+#include <geometry_msgs/PoseStamped.h>
+
 #include <ros/ros.h>
 #include <iostream>
 #include <string>
@@ -37,6 +41,7 @@ public:
     go_left,
     go_right,
     get_transform,
+    ik_calculate_joits,
     go_resting,
     state_finshed,
     state_failed,
@@ -75,10 +80,11 @@ protected:
   // enter here your states type
   state_srdf_to_moveit* srdf_to_moveit;
   state_get_tf_transform* get_tf_transform;
+  state_ik_get_joints_from_pose* ik_get_joints_from_pose;
   state_template* s_template;
-
-
   user_data_ user_data = {0};
+
+  geometry_msgs::PoseStamped object_pose;
 
 
 public:

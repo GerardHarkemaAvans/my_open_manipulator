@@ -9,6 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #ifndef _STATE_GET_TF_TRANSFORM_H_
 #define _STATE_GET_TF_TRANSFORM_H_
+#include <ros/ros.h>
 #include <iostream>
 #include <string>
 #include <tf2_ros/transform_listener.h>
@@ -65,6 +66,7 @@ public:
   }user_data_;
 
 protected:
+  ros::NodeHandle node_handle;
   state  state_ = idle;
   user_data_ user_data;
   string state_object_name;

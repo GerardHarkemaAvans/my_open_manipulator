@@ -169,6 +169,7 @@ include_directories(
    src/states/state_srdf_to_moveit.cpp
    src/states/state_get_tf_transform.cpp
    src/states/state_template.cpp
+   src/states/state_ik_get_joints_from_pose.cpp
  )
 
  add_executable(moveit_test

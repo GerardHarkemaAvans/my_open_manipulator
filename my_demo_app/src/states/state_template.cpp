@@ -11,7 +11,9 @@ bij een behavior.
 
 #define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
 
-state_template::state_template(const std::string& state_object_name/* define own paramters here*/){
+state_template::state_template(const std::string& state_object_name/* define own paramters here*/)
+: node_handle("")
+{
   this->state_object_name = state_object_name;
   DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
 
