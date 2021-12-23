@@ -48,24 +48,59 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
   moveit_msgs::GetPositionIK::Request service_request;
   moveit_msgs::GetPositionIK::Response service_response;
 
-  service_request.ik_request.group_name = "arm";
-  /*
-  service_request.ik_request.pose_stamped.header.frame_id = "torso_lift_link";
-  service_request.ik_request.pose_stamped.pose.position.x = 0.75;
-  service_request.ik_request.pose_stamped.pose.position.y = 0.188;
-  service_request.ik_request.pose_stamped.pose.position.z = 0.0;
+  service_request.ik_request.group_name = input_keys.group_name;
+  service_request.ik_request.pose_stamped = input_keys.pose;
+  service_request.ik_request.pose_stamped.pose.position.z += input_keys.offset;
 
-  service_request.ik_request.pose_stamped.pose.orientation.x = 0.0;
-  service_request.ik_request.pose_stamped.pose.orientation.y = 0.0;
-  service_request.ik_request.pose_stamped.pose.orientation.z = 0.0;
-  service_request.ik_request.pose_stamped.pose.orientation.w = 1.0;
-  */
+  ROS_INFO("x = %f", service_request.ik_request.pose_stamped.pose.position.x);
+  ROS_INFO("y = %f", service_request.ik_request.pose_stamped.pose.position.y);
+  ROS_INFO("z = %f", service_request.ik_request.pose_stamped.pose.position.z);
+  ROS_INFO("header = %s", service_request.ik_request.pose_stamped.header.frame_id.c_str());
+
+
+#if 1
+  service_request.ik_request.pose_stamped.pose.orientation.x = 0;
+  service_request.ik_request.pose_stamped.pose.orientation.y = 0;
+  service_request.ik_request.pose_stamped.pose.orientation.z = 0;
+  service_request.ik_request.pose_stamped.pose.orientation.w = 1;
+#endif
+
+
+#if 1
+  tf2::Quaternion q_orig, q_rot, q_new;
+  q_orig.setRPY( 0, 0, 0 );  // Create this quaternion from roll/pitch/yaw (in radians)
+  //ROS_INFO_STREAM(q);
+  q_rot.setRPY(0, input_keys.rotation, 0);
+
+  q_new = q_rot*q_orig;  // Calculate the new orientation
+  q_new.normalize();
+
+  // Get the original orientation of 'commanded_pose'
+  tf2::convert(service_request.ik_request.pose_stamped.pose.orientation, q_new);
+  //service_request.ik_request.pose_stamped.pose.orientation = q_new;
+#endif
+
+  service_request.ik_request.ik_link_name = input_keys.tool_link;
+  {
+		sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", ros::Duration(2));
+	  if (msg == NULL){
+				ROS_INFO("No joint states received");
+				return error;
+		}
+	  else
+	      service_request.ik_request.robot_state.joint_state = *msg;
+	}
+
+  service_request.ik_request.avoid_collisions = true;
+  service_request.ik_request.attempts = 500;
+  service_request.ik_request.timeout = ros::Duration(5.0);
+
   /* Call the service */
   ik_service_client.call(service_request, service_response);
   ROS_INFO_STREAM(
-      "Result: " << ((service_response.error_code.val == service_response.error_code.SUCCESS) ? "True " : "False ")
+      "GetPositionIK: " << ((service_response.error_code.val == service_response.error_code.SUCCESS) ? "True " : "False ")
                  << service_response.error_code.val);
-
+  if(service_response.error_code.val != service_response.error_code.SUCCESS) return error;
 
 
   state_ = state_ik_get_joints_from_pose::running;

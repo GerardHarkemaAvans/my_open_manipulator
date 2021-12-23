@@ -64,6 +64,8 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
                                                 user_data.input_keys.source_frame,
                                                 ros::Time::now(),
                                                 ros::Duration(3.0));
+    user_data.output_keys.transform.header.seq = 0;
+    user_data.output_keys.transform.header.stamp = ros::Time::now();
     user_data.output_keys.transform.pose.position.x = transformStamped.transform.translation.x;
     user_data.output_keys.transform.pose.position.y = transformStamped.transform.translation.y;
     user_data.output_keys.transform.pose.position.z = transformStamped.transform.translation.z;

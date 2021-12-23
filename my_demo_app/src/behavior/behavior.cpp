@@ -67,72 +67,73 @@ void behavior::stateCallback(const ros::TimerEvent&){
       }
       break;
     case go_left:
-    {
-      state_srdf_to_moveit::input_keys_ input_key;
-      input_key.config_name = "left";
-      state_srdf_to_moveit::output_keys_ output_key;
-      ROS_INFO("Executing go_left");
-      switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
-        case state_srdf_to_moveit::busy:
-          /* Do nothing */
-          break;
-        case state_srdf_to_moveit::done:
-          _state = get_transform;
-          break;
-        case state_srdf_to_moveit::failed:
-          _state = state_failed;
-          break;
+      {
+        state_srdf_to_moveit::input_keys_ input_key;
+        input_key.config_name = "left";
+        state_srdf_to_moveit::output_keys_ output_key;
+        ROS_INFO("Executing go_left");
+        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
+          case state_srdf_to_moveit::busy:
+            /* Do nothing */
+            break;
+          case state_srdf_to_moveit::done:
+            _state = get_transform;
+            break;
+          case state_srdf_to_moveit::failed:
+            _state = state_failed;
+            break;
+        }
       }
-    }
     break;
     case get_transform:
-    {
-      state_get_tf_transform::input_keys_ input_key;
-      input_key.target_frame = "world";
-      input_key.source_frame = "ik_testpoint";
-      state_get_tf_transform::output_keys_ output_key;
-      ROS_INFO("Executing get transform");
-      switch(get_tf_transform->simpleEexecute(input_key, output_key)){
-        case state_get_tf_transform::busy:
-          /* Do nothing */
-          break;
-        case state_get_tf_transform::done:
-          object_pose = output_key.transform;
-          ROS_INFO("x = %f", output_key.transform.pose.position.x);
-          ROS_INFO("y = %f", output_key.transform.pose.position.y);
-          ROS_INFO("z = %f", output_key.transform.pose.position.z);
-          _state = ik_calculate_joits;
-          break;
-        case state_get_tf_transform::failed:
-          _state = state_failed;
-          break;
+      {
+        state_get_tf_transform::input_keys_ input_key;
+        input_key.target_frame = "world";
+        input_key.source_frame = "ik_testpoint";
+        state_get_tf_transform::output_keys_ output_key;
+        ROS_INFO("Executing get transform");
+        switch(get_tf_transform->simpleEexecute(input_key, output_key)){
+          case state_get_tf_transform::busy:
+            ROS_INFO("busy");
+            /* Do nothing */
+            break;
+          case state_get_tf_transform::done:
+            object_pose = output_key.transform;
+            ROS_INFO("x = %f", object_pose.pose.position.x);
+            ROS_INFO("y = %f", output_key.transform.pose.position.y);
+            ROS_INFO("z = %f", output_key.transform.pose.position.z);
+            ROS_INFO("header = %s", output_key.transform.header.frame_id.c_str());
+            _state = ik_calculate_joits;
+            break;
+          case state_get_tf_transform::failed:
+            _state = state_failed;
+            break;
+        }
       }
-    }
+      break;
     case ik_calculate_joits:
-    {
-      state_ik_get_joints_from_pose::input_keys_ input_key;
-      input_key.pose = object_pose;
-      input_key.tool_link = "end_effector_link";
-      input_key.offset = 0.0;
-      input_key.rotation = 1.57;
-      state_ik_get_joints_from_pose::output_keys_ output_key;
-      ROS_INFO("Executing get transform");
-      switch(ik_get_joints_from_pose->simpleEexecute(input_key, output_key)){
-        case state_ik_get_joints_from_pose::busy:
-          /* Do nothing */
-          break;
-        case state_ik_get_joints_from_pose::done:
-          _state = go_right;
-          break;
-        case state_ik_get_joints_from_pose::failed:
-          _state = state_failed;
-          break;
+      {
+        state_ik_get_joints_from_pose::input_keys_ input_key;
+        input_key.pose = object_pose;
+        input_key.tool_link = "end_effector_link";
+        input_key.group_name = "arm";
+        input_key.offset = 0.01;
+        input_key.rotation = 1.57;
+        state_ik_get_joints_from_pose::output_keys_ output_key;
+        ROS_INFO("Executing get transform");
+        switch(ik_get_joints_from_pose->simpleEexecute(input_key, output_key)){
+          case state_ik_get_joints_from_pose::busy:
+            /* Do nothing */
+            break;
+          case state_ik_get_joints_from_pose::done:
+            _state = go_right;
+            break;
+          case state_ik_get_joints_from_pose::failed:
+            _state = state_failed;
+            break;
+        }
       }
-    }
-
-
-
-
+      break;
     case go_right:
       {
         state_srdf_to_moveit::input_keys_ input_key;

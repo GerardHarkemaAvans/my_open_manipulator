@@ -10,8 +10,11 @@ bij een behavior.
 #ifndef _STATE_IK_GET_JOINTS_FROM_POSE_H_
 #define _STATE_IK_GET_JOINTS_FROM_POSE_H_
 #include <geometry_msgs/PoseStamped.h>
-#include <ros/ros.h>
+#include <sensor_msgs/JointState.h>
 #include <moveit_msgs/GetPositionIK.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <ros/ros.h>
 #include <iostream>
 #include <string>
 #include "my_app/debug.h"
@@ -52,6 +55,7 @@ public:
 
   typedef struct input_keys_struct{
     geometry_msgs::PoseStamped pose;
+    string group_name;
     string tool_link;
     float offset;
     float rotation;
