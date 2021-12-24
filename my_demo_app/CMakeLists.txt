@@ -167,6 +167,7 @@ include_directories(
    src/my_demo_app_node.cpp
    src/behavior/behavior.cpp
    src/states/state_srdf_to_moveit.cpp
+   src/states/state_move_joints.cpp
    src/states/state_get_tf_transform.cpp
    src/states/state_template.cpp
    src/states/state_ik_get_joints_from_pose.cpp

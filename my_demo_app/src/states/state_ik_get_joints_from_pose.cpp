@@ -9,13 +9,13 @@ bij een behavior.
 *******************************************************************************/
 #include "my_app/states/state_ik_get_joints_from_pose.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
+#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
 
 state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
 {
   this->state_object_name = state_object_name;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::construcor\n", state_object_name.c_str());
 
   /* Write here your code */
   ik_service_client = node_handle.serviceClient<moveit_msgs::GetPositionIK>("compute_ik");
@@ -26,22 +26,22 @@ state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& 
     ros::Duration(1.0).sleep();
   }
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::construcor\n", state_object_name.c_str());
 }
 
 state_ik_get_joints_from_pose::~state_ik_get_joints_from_pose(){
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::destructor\n", state_object_name.c_str());
 
     /* Write here your code */
 
-    DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::destructor\n", state_object_name.c_str());
+    DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::destructor\n", state_object_name.c_str());
 }
 
 
 state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(input_keys_& input_keys){
 
   state_ik_get_joints_from_pose::status return_code = success;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
   /* Write here your code */
@@ -52,33 +52,36 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
   service_request.ik_request.pose_stamped = input_keys.pose;
   service_request.ik_request.pose_stamped.pose.position.z += input_keys.offset;
 
+  tf2::Quaternion q_orig, q_rot, q_new;
+  q_orig.setRPY( 0, 0, 0 );  // Create this quaternion from roll/pitch/yaw (in radians)
+  q_rot.setRPY(0, input_keys.rotation, 0);
+
+  q_new = q_rot * q_orig;  // Calculate the new orientation
+  q_new.normalize();
+
+#if (DEBUG_ITEMS & DEBUG_CUSTOM)
+  ROS_INFO("q_new x: %f", q_new.x());
+  ROS_INFO("q_new y: %f", q_new.y());
+  ROS_INFO("q_new z: %f", q_new.z());
+  ROS_INFO("q_new w: %f", q_new.w());
+#endif
+
+  service_request.ik_request.pose_stamped.pose.orientation.x = q_new.x();
+  service_request.ik_request.pose_stamped.pose.orientation.y = q_new.y();
+  service_request.ik_request.pose_stamped.pose.orientation.z = q_new.z();
+  service_request.ik_request.pose_stamped.pose.orientation.w = q_new.w();
+
+#if (DEBUG_ITEMS & DEBUG_CUSTOM)
+  ROS_INFO("header = %s", service_request.ik_request.pose_stamped.header.frame_id.c_str());
   ROS_INFO("x = %f", service_request.ik_request.pose_stamped.pose.position.x);
   ROS_INFO("y = %f", service_request.ik_request.pose_stamped.pose.position.y);
   ROS_INFO("z = %f", service_request.ik_request.pose_stamped.pose.position.z);
-  ROS_INFO("header = %s", service_request.ik_request.pose_stamped.header.frame_id.c_str());
-
-
-#if 1
-  service_request.ik_request.pose_stamped.pose.orientation.x = 0;
-  service_request.ik_request.pose_stamped.pose.orientation.y = 0;
-  service_request.ik_request.pose_stamped.pose.orientation.z = 0;
-  service_request.ik_request.pose_stamped.pose.orientation.w = 1;
+  ROS_INFO("x = %f", service_request.ik_request.pose_stamped.pose.orientation.x);
+  ROS_INFO("y = %f", service_request.ik_request.pose_stamped.pose.orientation.y);
+  ROS_INFO("z = %f", service_request.ik_request.pose_stamped.pose.orientation.z);
+  ROS_INFO("w = %f", service_request.ik_request.pose_stamped.pose.orientation.w);
 #endif
 
-
-#if 1
-  tf2::Quaternion q_orig, q_rot, q_new;
-  q_orig.setRPY( 0, 0, 0 );  // Create this quaternion from roll/pitch/yaw (in radians)
-  //ROS_INFO_STREAM(q);
-  q_rot.setRPY(0, input_keys.rotation, 0);
-
-  q_new = q_rot*q_orig;  // Calculate the new orientation
-  q_new.normalize();
-
-  // Get the original orientation of 'commanded_pose'
-  tf2::convert(service_request.ik_request.pose_stamped.pose.orientation, q_new);
-  //service_request.ik_request.pose_stamped.pose.orientation = q_new;
-#endif
 
   service_request.ik_request.ik_link_name = input_keys.tool_link;
   {
@@ -87,9 +90,17 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
 				ROS_INFO("No joint states received");
 				return error;
 		}
-	  else
+	  else{
 	      service_request.ik_request.robot_state.joint_state = *msg;
+    }
 	}
+
+#if (DEBUG_ITEMS & DEBUG_CUSTOM)
+  for(int i = 0; i < 5; i++){
+    ROS_INFO("Joint: %s, %f", service_request.ik_request.robot_state.joint_state.name[i].c_str(),
+                              service_request.ik_request.robot_state.joint_state.position[i]);
+  }
+#endif
 
   service_request.ik_request.avoid_collisions = true;
   service_request.ik_request.attempts = 500;
@@ -105,7 +116,7 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
 
   state_ = state_ik_get_joints_from_pose::running;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -114,13 +125,13 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::execute(v
 
   state_ik_get_joints_from_pose::outcomes return_value = busy;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
   /* Write here your code */
     return_value = done;
     state_ = state_ik_get_joints_from_pose::idle;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
@@ -159,11 +170,11 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEex
 
 state_ik_get_joints_from_pose::output_keys_ state_ik_get_joints_from_pose::onExit(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onExit\n", state_object_name.c_str());
   return(user_data.output_keys);
 }
 
@@ -171,11 +182,11 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onStop(){
 
   state_ik_get_joints_from_pose::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onStop\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
     /* Write here your code */
 
-    DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onStop\n", state_object_name.c_str());
+    DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onStop\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -183,14 +194,14 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onPause(){
 
   state_ik_get_joints_from_pose::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_ik_get_joints_from_pose::paused;
 
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -198,23 +209,23 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onResume(){
 
   state_ik_get_joints_from_pose::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_ik_get_joints_from_pose::running;
 
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
 state_ik_get_joints_from_pose::state state_ik_get_joints_from_pose::getState(void){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::getState\n", state_object_name.c_str());
   return(state_);
 }

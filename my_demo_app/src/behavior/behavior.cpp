@@ -22,6 +22,7 @@ behavior::behavior(const std::string& behavior_object_name)
 
   /* Write here your code */
   srdf_to_moveit = new state_srdf_to_moveit("srdf_to_moveit", "arm");
+  move_joints = new state_move_joints("move_joints", "arm");
   get_tf_transform = new state_get_tf_transform("get_tf_transform");
   ik_get_joints_from_pose = new state_ik_get_joints_from_pose("ik_get_joints_from_pose", "arm");
 
@@ -94,15 +95,16 @@ void behavior::stateCallback(const ros::TimerEvent&){
         ROS_INFO("Executing get transform");
         switch(get_tf_transform->simpleEexecute(input_key, output_key)){
           case state_get_tf_transform::busy:
-            ROS_INFO("busy");
             /* Do nothing */
             break;
           case state_get_tf_transform::done:
             object_pose = output_key.transform;
+#if 0
             ROS_INFO("x = %f", object_pose.pose.position.x);
             ROS_INFO("y = %f", output_key.transform.pose.position.y);
             ROS_INFO("z = %f", output_key.transform.pose.position.z);
             ROS_INFO("header = %s", output_key.transform.header.frame_id.c_str());
+#endif
             _state = ik_calculate_joits;
             break;
           case state_get_tf_transform::failed:
@@ -126,9 +128,29 @@ void behavior::stateCallback(const ros::TimerEvent&){
             /* Do nothing */
             break;
           case state_ik_get_joints_from_pose::done:
-            _state = go_right;
+            object_pose_joints = output_key.joints;
+            _state = go_pose;
             break;
           case state_ik_get_joints_from_pose::failed:
+            _state = state_failed;
+            break;
+        }
+      }
+      break;
+    case go_pose:
+      {
+        state_move_joints::input_keys_ input_key;
+        input_key.joints = object_pose_joints;
+        state_move_joints::output_keys_ output_key;
+        ROS_INFO("Executing go_pose");
+        switch(move_joints->simpleEexecute(input_key, output_key)){
+          case state_move_joints::busy:
+            /* Do nothing */
+            break;
+          case state_move_joints::done:
+            _state = go_right;
+            break;
+          case state_move_joints::failed:
             _state = state_failed;
             break;
         }

@@ -6,6 +6,11 @@
 #define DEBUG_LEVEL_2     2 // State debug messages
 #define DEBUG_LEVEL_3     3 // All state debug messages (not implemented yet!)
 
+#define DEBUG_NONE        0x00
+#define DEBUG_STATES      0x01
+#define DEBUG_CUSTOM      0x02
+
+
 #define DEBUG_PRINT(enable, fmt, ...) \
   do { if(enable) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
 
