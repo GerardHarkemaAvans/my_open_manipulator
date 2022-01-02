@@ -6,7 +6,7 @@ Date: december 2021
 Purpose:
 Voorbeeld implementation van een state machine
 *******************************************************************************/
-#include "my_app/behavior/behavior.h"
+#include "behaviors/include/behavior.h"
 
 int main(int argc, char **argv)
 {

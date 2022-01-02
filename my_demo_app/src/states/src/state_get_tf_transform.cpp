@@ -7,34 +7,34 @@ Purpose:
 Implementation (template) voor een state definitie welke gebruikt kan worden
 bij een behavior.
 *******************************************************************************/
-#include "my_app/states/state_get_tf_transform.h"
+#include "../include/state_get_tf_transform.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_2 //DEBUG_LEVEL_NONE
+#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
 
 state_get_tf_transform::state_get_tf_transform(const std::string& state_object_name/* define own paramters here*/)
 : node_handle("")
 {
       this->state_object_name = state_object_name;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::construcor\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::construcor\n", state_object_name.c_str());
 }
 
 state_get_tf_transform::~state_get_tf_transform(){
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::destructor\n", state_object_name.c_str());
 
     /* Write here your code */
 
-    DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::destructor\n", state_object_name.c_str());
+    DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::destructor\n", state_object_name.c_str());
 }
 
 
 state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& input_keys){
 
   state_get_tf_transform::status return_code = success;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
 
@@ -42,7 +42,7 @@ state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& inpu
 
   state_ = state_get_tf_transform::running;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -51,7 +51,7 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
 
   state_get_tf_transform::outcomes return_value = busy;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
   /* Write here your code */
 
@@ -83,7 +83,7 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
   }
   state_ = state_get_tf_transform::idle;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
@@ -122,11 +122,11 @@ state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_ke
 
 state_get_tf_transform::output_keys_ state_get_tf_transform::onExit(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onExit\n", state_object_name.c_str());
   return(user_data.output_keys);
 }
 
@@ -134,11 +134,11 @@ state_get_tf_transform::status state_get_tf_transform::onStop(){
 
   state_get_tf_transform::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onStop\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
     /* Write here your code */
 
-    DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onStop\n", state_object_name.c_str());
+    DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onStop\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -146,14 +146,14 @@ state_get_tf_transform::status state_get_tf_transform::onPause(){
 
   state_get_tf_transform::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_get_tf_transform::paused;
 
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -161,23 +161,23 @@ state_get_tf_transform::status state_get_tf_transform::onResume(){
 
   state_get_tf_transform::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_get_tf_transform::running;
 
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
 state_get_tf_transform::state state_get_tf_transform::getState(void){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Laeving %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::getState\n", state_object_name.c_str());
   return(state_);
 }

@@ -7,34 +7,34 @@ Purpose:
 Implementation (template) voor een state definitie welke gebruikt kan worden
 bij een behavior.
 *******************************************************************************/
-#include "my_app/states/state_srdf_to_moveit.h"
+#include "../include/state_srdf_to_moveit.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_1//DEBUG_LEVEL_NONE//DEBUG_LEVEL_1
+#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
 
 state_srdf_to_moveit::state_srdf_to_moveit(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
 {
   this->state_object_name = state_object_name;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::construcor\n", state_object_name.c_str());
 
   move_group = new moveit::planning_interface::MoveGroupInterface(group);
   move_group_state = move_group->getCurrentState(1.0);
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::construcor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::construcor\n", state_object_name.c_str());
 }
 
 state_srdf_to_moveit::~state_srdf_to_moveit(){
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destrucor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::destrucor\n", state_object_name.c_str());
 
     /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::destrucor\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_keys){
 
   state_srdf_to_moveit::status return_code = success;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
 
@@ -90,7 +90,7 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
 
   state_ = state_srdf_to_moveit::running;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onEnter\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -99,7 +99,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
   state_srdf_to_moveit::outcomes return_value = busy;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
   // nog timeout inbouwen
   {
@@ -119,7 +119,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 	}
 
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
@@ -160,11 +160,11 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_&
 
 state_srdf_to_moveit::output_keys_ state_srdf_to_moveit::onExit(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onExit\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onExit\n", state_object_name.c_str());
   return(user_data.output_keys);
 }
 
@@ -172,11 +172,11 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
 
   state_srdf_to_moveit::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onStop\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
     /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onStop\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onStop\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -184,13 +184,13 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onPause(){
 
   state_srdf_to_moveit::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_srdf_to_moveit::paused;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onPause\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
@@ -198,21 +198,21 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onResume(){
 
   state_srdf_to_moveit::status return_code = success;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
   state_ = state_srdf_to_moveit::running;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onResume\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
 state_srdf_to_moveit::state state_srdf_to_moveit::getState(void){
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::getState\n", state_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::getState\n", state_object_name.c_str());
   return(state_);
 }

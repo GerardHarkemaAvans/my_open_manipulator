@@ -7,7 +7,7 @@ Purpose:
 Implementation (template) voor een state definitie welke gebruikt kan worden
 bij een behavior.
 *******************************************************************************/
-#include "my_app/states/state_ik_get_joints_from_pose.h"
+#include "../include/state_ik_get_joints_from_pose.h"
 
 #define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
 

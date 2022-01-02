@@ -1,14 +1,11 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-#define DEBUG_LEVEL_NONE  0 // Nu Debugging
-#define DEBUG_LEVEL_1     1 // Own debug messages
-#define DEBUG_LEVEL_2     2 // State debug messages
-#define DEBUG_LEVEL_3     3 // All state debug messages (not implemented yet!)
-
 #define DEBUG_NONE        0x00
 #define DEBUG_STATES      0x01
-#define DEBUG_CUSTOM      0x02
+#define DEBUG_BEHAVIORS   0x02
+// defin other dembuf functions here
+#define DEBUG_CUSTOM      0x80
 
 
 #define DEBUG_PRINT(enable, fmt, ...) \

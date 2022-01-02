@@ -4,13 +4,12 @@ Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
 Purpose:
-Implementation (template) voor een behaivior definitie welke gebruikt kan worden
+Implementation (template) voor een behavior definitie welke gebruikt kan worden
 bij een statemachine.
 *******************************************************************************/
-#include "my_app/behavior/behavior.h"
+#include "../include/behavior.h"
 
-#define DEBUG_LEVEL       DEBUG_LEVEL_NONE//DEBUG_LEVEL_2
-
+#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_BEHAVIORS | DEBUG_CUSTOM
 
 behavior::behavior(const std::string& behavior_object_name)
 : node_handle(""),
@@ -18,7 +17,7 @@ behavior::behavior(const std::string& behavior_object_name)
 {
 
   this->behavior_object_name = behavior_object_name;
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::construcor\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::construcor\n", behavior_object_name.c_str());
 
   /* Write here your code */
   srdf_to_moveit = new state_srdf_to_moveit("srdf_to_moveit", "arm");
@@ -30,17 +29,17 @@ behavior::behavior(const std::string& behavior_object_name)
                                           &behavior::stateCallback,
                                           this);
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::construcor\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::construcor\n", behavior_object_name.c_str());
 }
 
 behavior::~behavior()
 {
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::destructor\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::destructor\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::destructor\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::destructor\n", behavior_object_name.c_str());
 }
 
 void behavior::stateCallback(const ros::TimerEvent&){
@@ -213,7 +212,7 @@ void behavior::stateCallback(const ros::TimerEvent&){
 
 void behavior::onEnter(input_keys_ &input_keys){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onEnter\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onEnter\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
@@ -221,48 +220,48 @@ void behavior::onEnter(input_keys_ &input_keys){
   ROS_INFO("Starting");
   _state = state_start;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onEnter\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::onEnter\n", behavior_object_name.c_str());
 }
 
 behavior::outcomes behavior::execute(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::execute\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::execute\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::execute\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::execute\n", behavior_object_name.c_str());
   return(_outcomes);
 }
 
 behavior::output_keys_ behavior::onExit(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::onExit\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onExit\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::onExit\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::onExit\n", behavior_object_name.c_str());
   return(user_data.output_keys);
 }
 
 void behavior::abort(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::abort\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::abort\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
   _state = state_abort;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::abort\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::abort\n", behavior_object_name.c_str());
 }
 
 void behavior::reset(){
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Entering %s::reset\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::reset\n", behavior_object_name.c_str());
 
   ROS_INFO("Resetiing");
   /* Write here your code */
 
   _state = state_idle;
 
-  DEBUG_PRINT(DEBUG_LEVEL >= DEBUG_LEVEL_1, "Leaving %s::reset\n", behavior_object_name.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::reset\n", behavior_object_name.c_str());
 }

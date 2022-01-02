@@ -10,11 +10,11 @@ worden bij een statemachine.
 #ifndef _BEHAVIOR_H_
 #define _BEHAVIOR_H_
 
-#include "my_app/states/state_srdf_to_moveit.h"
-#include "my_app/states/state_move_joints.h"
-#include "my_app/states/state_get_tf_transform.h"
-#include "my_app/states/state_ik_get_joints_from_pose.h"
-#include "my_app/states/state_template.h"
+#include "src/states/include/state_srdf_to_moveit.h"
+#include "src/states/include/state_move_joints.h"
+#include "src/states/include/state_get_tf_transform.h"
+#include "src/states/include/state_ik_get_joints_from_pose.h"
+#include "src/states/include/state_template.h"
 #include "my_app/debug.h"
 
 #include <geometry_msgs/PoseStamped.h>
