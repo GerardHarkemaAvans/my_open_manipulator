@@ -33,7 +33,7 @@ state_srdf_to_moveit::~state_srdf_to_moveit(){
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_keys){
 
-  state_srdf_to_moveit::status return_code = success;
+  state_srdf_to_moveit::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -86,8 +86,8 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
 
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-    if (success)
+    bool succes = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (succes)
     {
       //move_group->execute(my_plan);
       move_group->asyncExecute(my_plan);
@@ -105,7 +105,7 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
 
 state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
-  state_srdf_to_moveit::outcomes return_value = busy;
+  state_srdf_to_moveit::outcomes return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
@@ -121,7 +121,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
       execute_status=msg->status.status;
       //ROS_INFO("%i execute status",execute_status);
       if(execute_status==3){ // Wat als andere status?
-        return_value = done;
+        return_value = outcomes_done;
       }
     }
 	}
@@ -134,14 +134,14 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
 /* do not modify this member function */
 state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
-  outcomes return_value = busy;
+  outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
         status on_enter_status_ = onEnter(input_keys);
-        if(on_enter_status_ != success){
-          return_value = failed;
+        if(on_enter_status_ != status_succes){
+          return_value = outcomes_failed;
           break;
         }
         execution_state_ = execution_execute;
@@ -149,7 +149,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_&
       break;
     case execution_execute:
       execution_return_value = execute();
-      if(execution_return_value != busy){
+      if(execution_return_value != outcomes_busy){
         execution_state_ = execution_exit;
       }
       break;
@@ -178,7 +178,7 @@ state_srdf_to_moveit::output_keys_ state_srdf_to_moveit::onExit(){
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
 
-  state_srdf_to_moveit::status return_code = success;
+  state_srdf_to_moveit::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -190,7 +190,7 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onPause(){
 
-  state_srdf_to_moveit::status return_code = success;
+  state_srdf_to_moveit::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
@@ -204,7 +204,7 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onPause(){
 
 state_srdf_to_moveit::status state_srdf_to_moveit::onResume(){
 
-  state_srdf_to_moveit::status return_code = success;
+  state_srdf_to_moveit::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 

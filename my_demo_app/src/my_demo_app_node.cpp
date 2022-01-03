@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         break;
       case behavior_main::status_failed:
         abort_flag = true;
-        std::cout << "my_app finished with status failed" << std::endl;
+        std::cout << "my_app finished with status outcomes_failed" << std::endl;
         break;
     }
     if(abort_flag) break;

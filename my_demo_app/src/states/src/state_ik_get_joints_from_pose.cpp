@@ -40,7 +40,7 @@ state_ik_get_joints_from_pose::~state_ik_get_joints_from_pose(){
 
 state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(input_keys_& input_keys){
 
-  state_ik_get_joints_from_pose::status return_code = success;
+  state_ik_get_joints_from_pose::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -88,7 +88,7 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
 		sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", ros::Duration(2));
 	  if (msg == NULL){
 				ROS_INFO("No joint states received");
-				return error;
+				return status_error;
 		}
 	  else{
 	      service_request.ik_request.robot_state.joint_state = *msg;
@@ -114,7 +114,7 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
   ROS_INFO_STREAM(
       "GetPositionIK: " << ((service_response.error_code.val == service_response.error_code.SUCCESS) ? "True " : "False ")
                  << service_response.error_code.val);
-  if(service_response.error_code.val != service_response.error_code.SUCCESS) return error;
+  if(service_response.error_code.val != service_response.error_code.SUCCESS) return status_error;
 
 
   int number_of_joints = 5;//sizeof(service_response.solution.joint_state.position)/sizeof(service_response.solution.joint_state.position[0]);
@@ -138,12 +138,12 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
 
 state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::execute(void){
 
-  state_ik_get_joints_from_pose::outcomes return_value = busy;
+  state_ik_get_joints_from_pose::outcomes return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
   /* Write here your code */
-    return_value = done;
+    return_value = outcomes_done;
     state_ = state_ik_get_joints_from_pose::idle;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::execute\n", state_object_name.c_str());
@@ -152,14 +152,14 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::execute(v
 
 /* do not modify this member function */
 state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
-  outcomes return_value = busy;
+  outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
         status on_enter_status_ = onEnter(input_keys);
-        if(on_enter_status_ != success){
-          return_value = failed;
+        if(on_enter_status_ != status_succes){
+          return_value = outcomes_failed;
           break;
         }
         execution_state_ = execution_execute;
@@ -167,7 +167,7 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEex
       break;
     case execution_execute:
       execution_return_value = execute();
-      if(execution_return_value != busy){
+      if(execution_return_value != outcomes_busy){
         execution_state_ = execution_exit;
       }
       break;
@@ -195,7 +195,7 @@ state_ik_get_joints_from_pose::output_keys_ state_ik_get_joints_from_pose::onExi
 
 state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onStop(){
 
-  state_ik_get_joints_from_pose::status return_code = success;
+  state_ik_get_joints_from_pose::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -207,7 +207,7 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onStop(){
 
 state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onPause(){
 
-  state_ik_get_joints_from_pose::status return_code = success;
+  state_ik_get_joints_from_pose::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
@@ -222,7 +222,7 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onPause(){
 
 state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onResume(){
 
-  state_ik_get_joints_from_pose::status return_code = success;
+  state_ik_get_joints_from_pose::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 

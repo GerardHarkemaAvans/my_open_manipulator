@@ -166,6 +166,7 @@ include_directories(
  add_executable(${PROJECT_NAME}
    src/my_demo_app_node.cpp
    src/behaviors/src/behavior_main.cpp
+   src/behaviors/src/behavior_go_pose_ik.cpp
    src/states/src/state_srdf_to_moveit.cpp
    src/states/src/state_move_joints.cpp
    src/states/src/state_get_tf_transform.cpp

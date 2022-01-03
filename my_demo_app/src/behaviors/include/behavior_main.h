@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: behavior.h
+File: behavior_main.h
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -7,9 +7,10 @@ Purpose:
 Interface header (template) voor een behaivior definitie welke gebruikt kan
 worden bij een statemachine.
 *******************************************************************************/
-#ifndef _BEHAVIOR_H_
-#define _BEHAVIOR_H_
+#ifndef _BEHAVIOR_MAIN_H_
+#define _BEHAVIOR_MAIN_H_
 
+#include "../include/behavior_go_pose_ik.h"
 #include "src/states/include/state_srdf_to_moveit.h"
 #include "src/states/include/state_move_joints.h"
 #include "src/states/include/state_get_tf_transform.h"
@@ -25,9 +26,16 @@ worden bij een statemachine.
 
 using namespace std;
 
-class behavior{
+class behavior_main{
 
 public:
+
+  typedef enum{
+    status_succes = 0,
+    status_error
+    // append other errors here
+  }status;
+
   typedef enum{
     status_busy = 0,
     status_finshed,
@@ -38,19 +46,25 @@ public:
     state_idle = 0,
     state_start,
     // add states here
-    go_home,
-    go_left,
-    go_right,
-    get_transform,
-    ik_calculate_joits,
-    go_pose,
-    go_resting,
+    state_go_home,
+    state_go_left,
+    state_go_right,
+    state_go_pose_ik,
+    state_go_resting,
+    // add states here
     state_finshed,
     state_failed,
     state_abort,
     state_wait_for_reset
-    // add states here
   }state;
+
+  typedef enum{
+    execution_wait_for_start = 0,
+    execution_execute,
+    execution_exit
+    // append other errors here
+  }execution_state;
+
 
   typedef struct input_keys_struct{
     int dummy;
@@ -75,33 +89,37 @@ protected:
   void stateCallback(const ros::TimerEvent&);
 
   string behavior_object_name;
+  bool simple_execution_mode;
 
   outcomes _outcomes = outcomes::status_busy;
   state _state = state::state_idle;
 
   // enter here your states type
   state_srdf_to_moveit* srdf_to_moveit;
-  state_move_joints* move_joints;
-  state_get_tf_transform* get_tf_transform;
-  state_ik_get_joints_from_pose* ik_get_joints_from_pose;
   state_template* s_template;
-  user_data_ user_data = {0};
+  behavior_go_pose_ik *go_pose_ik;
+  user_data_ user_data;
 
   geometry_msgs::PoseStamped object_pose;
   std::map<std::string, double> object_pose_joints;
 
-
+  void stateHandler(void);
+  execution_state execution_state_ = execution_wait_for_start;
+  outcomes execution_return_value;
 
 public:
-  behavior(const std::string& state_object_name);
-  ~behavior();
+  behavior_main(const std::string& state_object_name, bool simple_execution_mode);
+  ~behavior_main();
 
-  void onEnter();
-  void onEnter(input_keys_ &input_keys);
-  output_keys_ onExit();
-  void abort();
+  status onEnter(input_keys_ &input_keys);
+  outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
   outcomes execute();
-  void reset();
+  output_keys_ onExit();
+
+#if 0 // not implmented yet
+  status abort();
+  status reset();
+#endif
 };
 
-#endif // _BEHAVIOR_H_
+#endif // _BEHAVIOR_MAIN_H_

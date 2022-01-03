@@ -33,7 +33,7 @@ state_get_tf_transform::~state_get_tf_transform(){
 
 state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& input_keys){
 
-  state_get_tf_transform::status return_code = success;
+  state_get_tf_transform::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -49,7 +49,7 @@ state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& inpu
 
 state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
 
-  state_get_tf_transform::outcomes return_value = busy;
+  state_get_tf_transform::outcomes return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
@@ -75,11 +75,11 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
     user_data.output_keys.transform.pose.orientation.w = transformStamped.transform.rotation.w;
     user_data.output_keys.transform.header.frame_id = user_data.input_keys.target_frame;
 
-    return_value = done;
+    return_value = outcomes_done;
   }
   catch (tf2::TransformException &ex) {
     ROS_ERROR("Falid to get transform");
-    return_value = failed;
+    return_value = outcomes_failed;
   }
   state_ = state_get_tf_transform::idle;
 
@@ -89,14 +89,14 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
 
 /* do not modify this member function */
 state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
-  outcomes return_value = busy;
+  outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
         status on_enter_status_ = onEnter(input_keys);
-        if(on_enter_status_ != success){
-          return_value = failed;
+        if(on_enter_status_ != status_succes){
+          return_value = outcomes_failed;
           break;
         }
         execution_state_ = execution_execute;
@@ -104,7 +104,7 @@ state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_ke
       break;
     case execution_execute:
       execution_return_value = execute();
-      if(execution_return_value != busy){
+      if(execution_return_value != outcomes_busy){
         execution_state_ = execution_exit;
       }
       break;
@@ -132,7 +132,7 @@ state_get_tf_transform::output_keys_ state_get_tf_transform::onExit(){
 
 state_get_tf_transform::status state_get_tf_transform::onStop(){
 
-  state_get_tf_transform::status return_code = success;
+  state_get_tf_transform::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -144,7 +144,7 @@ state_get_tf_transform::status state_get_tf_transform::onStop(){
 
 state_get_tf_transform::status state_get_tf_transform::onPause(){
 
-  state_get_tf_transform::status return_code = success;
+  state_get_tf_transform::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
@@ -159,7 +159,7 @@ state_get_tf_transform::status state_get_tf_transform::onPause(){
 
 state_get_tf_transform::status state_get_tf_transform::onResume(){
 
-  state_get_tf_transform::status return_code = success;
+  state_get_tf_transform::status return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 

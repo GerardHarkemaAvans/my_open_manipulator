@@ -95,8 +95,8 @@ int main(int argc, char** argv)
 #if 1
 //  move_group->move();
 
-  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-    if (success)
+  bool succes = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (succes)
     {
     move_group->execute(my_plan);
     //move_group->asyncExecute(my_plan);

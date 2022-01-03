@@ -21,8 +21,8 @@ class state_template{
 
 public:
   typedef enum{
-    success = 0,
-    error
+    status_succes = 0,
+    status_error
     // append other errors here
   }status;
 
@@ -41,9 +41,9 @@ public:
   }state;
 
   typedef enum{
-    busy = 0,
-    done,
-    failed
+    outcomes_busy = 0,
+    outcomes_done,
+    outcomes_failed
     // append other outcomes here
   }outcomes;
 
@@ -83,7 +83,7 @@ public:
 
   // Starten van de state
   status onEnter(input_keys_& input_keys);
-  // Executeren van de state, state is actief zolang outcome == busy
+  // Executeren van de state, state is actief zolang outcome == outcomes_busy
   outcomes execute(void);
 
   outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
