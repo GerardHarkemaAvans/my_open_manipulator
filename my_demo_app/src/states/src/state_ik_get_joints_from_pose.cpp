@@ -9,7 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #include "../include/state_ik_get_joints_from_pose.h"
 
-#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
+#define DEBUG_ITEMS       DEBUG_NONE | DEBUG_CUSTOM//| DEBUG_STATES | DEBUG_CUSTOM
 
 state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
@@ -96,9 +96,12 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
 	}
 
 #if (DEBUG_ITEMS & DEBUG_CUSTOM)
-  for(int i = 0; i < 5; i++){
-    ROS_INFO("Joint: %s, %f", service_request.ik_request.robot_state.joint_state.name[i].c_str(),
-                              service_request.ik_request.robot_state.joint_state.position[i]);
+  {
+    int number_of_joints = 5;//sizeof(service_request.ik_request.robot_state.joint_state.position)/sizeof(service_request.ik_request.robot_state.joint_state.position[0]);
+    for(int i = 0; i < number_of_joints; i++){
+      ROS_INFO("Current Joints: %s, %f", service_request.ik_request.robot_state.joint_state.name[i].c_str(),
+                                service_request.ik_request.robot_state.joint_state.position[i]);
+    }
   }
 #endif
 
@@ -112,6 +115,18 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
       "GetPositionIK: " << ((service_response.error_code.val == service_response.error_code.SUCCESS) ? "True " : "False ")
                  << service_response.error_code.val);
   if(service_response.error_code.val != service_response.error_code.SUCCESS) return error;
+
+
+  int number_of_joints = 5;//sizeof(service_response.solution.joint_state.position)/sizeof(service_response.solution.joint_state.position[0]);
+  //int number_of_joints = service_response.solution.joint_state.name.len();
+  for(int i = 0; i < number_of_joints; i++){
+    #if (DEBUG_ITEMS & DEBUG_CUSTOM)
+      ROS_INFO("Ik Joints: %s, %f", service_response.solution.joint_state.name[i].c_str(),
+                                service_response.solution.joint_state.position[i]);
+    #endif
+    user_data.output_keys.joints.insert( std::pair<std::string,double>(service_response.solution.joint_state.name[i].c_str(),
+                                  service_response.solution.joint_state.position[i]));
+  }
 
 
   state_ = state_ik_get_joints_from_pose::running;

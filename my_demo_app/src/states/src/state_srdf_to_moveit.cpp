@@ -9,7 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #include "../include/state_srdf_to_moveit.h"
 
-#define DEBUG_ITEMS       DEBUG_NONE//| DEBUG_STATES | DEBUG_CUSTOM
+#define DEBUG_ITEMS       DEBUG_NONE | DEBUG_STATES | DEBUG_CUSTOM
 
 state_srdf_to_moveit::state_srdf_to_moveit(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
@@ -44,6 +44,14 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_ke
 
     move_group->setJointValueTarget(target);
 
+#if 0
+    std::map<std::string, double>::iterator it = target.begin();
+    while(it != target.end())
+    {
+        std::cout << it->first << " :: " << it->second << std::endl;
+        it++;
+    }
+#endif
 
 #if 0
     moveit_msgs::Constraints constraints;
