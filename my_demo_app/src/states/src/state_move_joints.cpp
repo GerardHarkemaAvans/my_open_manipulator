@@ -9,7 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #include "../include/state_move_joints.h"
 
-#define DEBUG_ITEMS       DEBUG_NONE | DEBUG_STATES | DEBUG_CUSTOM
+#define DEBUG_ITEMS       DEBUG_NONE //| DEBUG_STATES | DEBUG_CUSTOM
 
 state_move_joints::state_move_joints(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
@@ -39,15 +39,15 @@ state_move_joints::status state_move_joints::onEnter(input_keys_& input_keys){
   user_data.input_keys = input_keys;
 
   std::map<std::string, double> target = user_data.input_keys.joints;
-  std::map<std::string, double>::iterator it = target.begin();
-  while(it != target.end())
-  {
-      //DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "%s :: %s\n", c_str(it->first), c_str(it->second));
 
-      std::cout << it->first << " :: " << it->second << std::endl;
-      it++;
-  }
-
+  #if(DEBUG_ITEMS & DEBUG_CUSTOM)
+    std::map<std::string, double>::iterator it = target.begin();
+    while(it != target.end())
+    {
+        std::cout << it->first << " :: " << it->second << std::endl;
+        it++;
+    }
+  #endif
 
   move_group->setJointValueTarget(user_data.input_keys.joints);
 

@@ -55,7 +55,7 @@ void behavior_go_pose_ik::stateHandler(){
         input_key.target_frame = user_data.input_keys.target_frame;
         input_key.source_frame = user_data.input_keys.source_frame;
         state_get_tf_transform::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing get transform");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_get_transform");
         switch(get_tf_transform->simpleEexecute(input_key, output_key)){
           case state_get_tf_transform::outcomes_busy:
             /* Do nothing */
@@ -85,7 +85,7 @@ void behavior_go_pose_ik::stateHandler(){
         input_key.offset = 0.01;
         input_key.rotation = 1.00;//1.57;
         state_ik_get_joints_from_pose::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing get transform");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_ik_calculate_joints");
         switch(ik_get_joints_from_pose->simpleEexecute(input_key, output_key)){
           case state_ik_get_joints_from_pose::outcomes_busy:
             /* Do nothing */
@@ -107,7 +107,7 @@ void behavior_go_pose_ik::stateHandler(){
         state_move_joints::input_keys_ input_key;
         input_key.joints = this->object_pose_joints;
         state_move_joints::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go_pose");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_pose");
         switch(move_joints->simpleEexecute(input_key, output_key)){
           case state_move_joints::outcomes_busy:
             /* Do nothing */
@@ -122,12 +122,12 @@ void behavior_go_pose_ik::stateHandler(){
       }
       break;
     case state_failed:
-      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Ending with outcome outcomes_failed");
+      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome outcomes_failed");
       _outcomes = outcomes::outcomes_failed;
       _state = state_wait_for_reset;
       break;
     case state_finshed:
-      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Ending with outcome finsihed");
+      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome finsihed");
       _outcomes = outcomes::outcomes_finshed;
       _state = state_wait_for_reset;
       break;

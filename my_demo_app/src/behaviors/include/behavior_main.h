@@ -87,6 +87,9 @@ protected:
 
   ros::Timer state_timer;
   void stateCallback(const ros::TimerEvent&);
+  void stateHandler(void);
+  execution_state execution_state_ = execution_wait_for_start;
+  outcomes execution_return_value;
 
   string behavior_object_name;
   bool simple_execution_mode;
@@ -100,12 +103,6 @@ protected:
   behavior_go_pose_ik *go_pose_ik;
   user_data_ user_data;
 
-  geometry_msgs::PoseStamped object_pose;
-  std::map<std::string, double> object_pose_joints;
-
-  void stateHandler(void);
-  execution_state execution_state_ = execution_wait_for_start;
-  outcomes execution_return_value;
 
 public:
   behavior_main(const std::string& state_object_name, bool simple_execution_mode);

@@ -14,18 +14,18 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "behavior_node");
   ros::NodeHandle node_handle("");
 
+  behavior_main::input_keys_ input_key;
+  behavior_main::output_keys_ output_key;
+
+  input_key.dummy = 0;
+  bool abort_flag = false;
+
   // Start AsyncSpinner
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  behavior_main::input_keys_ input_key;
-  behavior_main::output_keys_ output_key;
-
   std::cout << "my_app started" << std::endl;
-  behavior_main my_behavior("my_behavior", true); // start behaivior in simple exuecution mode
-
-  input_key.dummy = 0;
-  bool abort_flag = false;
+  behavior_main my_behavior("my_behavior", true); // start behaivior in simple execution mode
 
   while (ros::ok())
   {

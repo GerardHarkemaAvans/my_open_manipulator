@@ -9,7 +9,7 @@ bij een behavior.
 *******************************************************************************/
 #include "../include/state_ik_get_joints_from_pose.h"
 
-#define DEBUG_ITEMS       DEBUG_NONE | DEBUG_CUSTOM//| DEBUG_STATES | DEBUG_CUSTOM
+#define DEBUG_ITEMS       DEBUG_NONE //| DEBUG_CUSTOM | DEBUG_STATES | DEBUG_CUSTOM
 
 state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
 : node_handle("")
@@ -59,35 +59,30 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
   q_new = q_rot * q_orig;  // Calculate the new orientation
   q_new.normalize();
 
-#if (DEBUG_ITEMS & DEBUG_CUSTOM)
-  ROS_INFO("q_new x: %f", q_new.x());
-  ROS_INFO("q_new y: %f", q_new.y());
-  ROS_INFO("q_new z: %f", q_new.z());
-  ROS_INFO("q_new w: %f", q_new.w());
-#endif
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "q_new x: %f\n", q_new.x());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "q_new y: %f\n", q_new.y());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "q_new z: %f\n", q_new.z());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "q_new w: %f\n", q_new.w());
 
   service_request.ik_request.pose_stamped.pose.orientation.x = q_new.x();
   service_request.ik_request.pose_stamped.pose.orientation.y = q_new.y();
   service_request.ik_request.pose_stamped.pose.orientation.z = q_new.z();
   service_request.ik_request.pose_stamped.pose.orientation.w = q_new.w();
 
-#if (DEBUG_ITEMS & DEBUG_CUSTOM)
-  ROS_INFO("header = %s", service_request.ik_request.pose_stamped.header.frame_id.c_str());
-  ROS_INFO("x = %f", service_request.ik_request.pose_stamped.pose.position.x);
-  ROS_INFO("y = %f", service_request.ik_request.pose_stamped.pose.position.y);
-  ROS_INFO("z = %f", service_request.ik_request.pose_stamped.pose.position.z);
-  ROS_INFO("x = %f", service_request.ik_request.pose_stamped.pose.orientation.x);
-  ROS_INFO("y = %f", service_request.ik_request.pose_stamped.pose.orientation.y);
-  ROS_INFO("z = %f", service_request.ik_request.pose_stamped.pose.orientation.z);
-  ROS_INFO("w = %f", service_request.ik_request.pose_stamped.pose.orientation.w);
-#endif
-
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "header = %s\n", service_request.ik_request.pose_stamped.header.frame_id.c_str());
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "position.x = %f\n", service_request.ik_request.pose_stamped.pose.position.x);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "position.y = %f\n", service_request.ik_request.pose_stamped.pose.position.y);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "position.z = %f\n", service_request.ik_request.pose_stamped.pose.position.z);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "orientation.x = %f\n", service_request.ik_request.pose_stamped.pose.orientation.x);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "orientation.y = %f\n", service_request.ik_request.pose_stamped.pose.orientation.y);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "orientation.z = %f\n", service_request.ik_request.pose_stamped.pose.orientation.z);
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "orientation.w = %f\n", service_request.ik_request.pose_stamped.pose.orientation.w);
 
   service_request.ik_request.ik_link_name = input_keys.tool_link;
   {
 		sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", ros::Duration(2));
 	  if (msg == NULL){
-				ROS_INFO("No joint states received");
+				ROS_ERROR("No joint states received");
 				return status_error;
 		}
 	  else{
@@ -95,15 +90,13 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
     }
 	}
 
-#if (DEBUG_ITEMS & DEBUG_CUSTOM)
   {
-    int number_of_joints = 5;//sizeof(service_request.ik_request.robot_state.joint_state.position)/sizeof(service_request.ik_request.robot_state.joint_state.position[0]);
+    int number_of_joints = service_request.ik_request.robot_state.joint_state.position.size();
     for(int i = 0; i < number_of_joints; i++){
-      ROS_INFO("Current Joints: %s, %f", service_request.ik_request.robot_state.joint_state.name[i].c_str(),
+      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "Current Joints: %s, %f\n", service_request.ik_request.robot_state.joint_state.name[i].c_str(),
                                 service_request.ik_request.robot_state.joint_state.position[i]);
     }
   }
-#endif
 
   service_request.ik_request.avoid_collisions = true;
   service_request.ik_request.attempts = 500;
@@ -117,13 +110,10 @@ state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(inp
   if(service_response.error_code.val != service_response.error_code.SUCCESS) return status_error;
 
 
-  int number_of_joints = 5;//sizeof(service_response.solution.joint_state.position)/sizeof(service_response.solution.joint_state.position[0]);
-  //int number_of_joints = service_response.solution.joint_state.name.len();
+  int number_of_joints = service_response.solution.joint_state.position.size();
   for(int i = 0; i < number_of_joints; i++){
-    #if (DEBUG_ITEMS & DEBUG_CUSTOM)
-      ROS_INFO("Ik Joints: %s, %f", service_response.solution.joint_state.name[i].c_str(),
+    DEBUG_PRINT(DEBUG_ITEMS & DEBUG_CUSTOM, "Ik Joints: %s, %f\n", service_response.solution.joint_state.name[i].c_str(),
                                 service_response.solution.joint_state.position[i]);
-    #endif
     user_data.output_keys.joints.insert( std::pair<std::string,double>(service_response.solution.joint_state.name[i].c_str(),
                                   service_response.solution.joint_state.position[i]));
   }

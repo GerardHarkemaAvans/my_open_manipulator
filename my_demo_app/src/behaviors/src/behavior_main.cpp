@@ -53,7 +53,7 @@ void behavior_main::stateHandler(){
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "home";
         state_srdf_to_moveit::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go_home");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_home");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
             /* Do nothing */
@@ -72,7 +72,7 @@ void behavior_main::stateHandler(){
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "left";
         state_srdf_to_moveit::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go_left");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_left");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
             /* Do nothing */
@@ -92,7 +92,7 @@ void behavior_main::stateHandler(){
         input_key.target_frame = "world";
         input_key.source_frame = "ik_testpoint";
         behavior_go_pose_ik::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go pose ik");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_pose ik");
         switch(go_pose_ik->simpleEexecute(input_key, output_key)){
           case behavior_go_pose_ik::outcomes_busy:
             /* Do nothing */
@@ -111,7 +111,7 @@ void behavior_main::stateHandler(){
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "right";
         state_srdf_to_moveit::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go_right");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_right");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
             /* Do nothing */
@@ -130,7 +130,7 @@ void behavior_main::stateHandler(){
         state_srdf_to_moveit::input_keys_ input_key;
         input_key.config_name = "resting";
         state_srdf_to_moveit::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Executing go_resting");
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_resting");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
             /* Do nothing */
@@ -145,12 +145,12 @@ void behavior_main::stateHandler(){
       }
       break;
     case state_failed:
-      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Ending with outcome outcomes_failed");
+      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome outcomes_failed");
       _outcomes = outcomes::status_failed;
       _state = state_wait_for_reset;
       break;
     case state_finshed:
-      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Ending with outcome finsihed");
+      DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome finsihed");
       _outcomes = outcomes::status_finshed;
       _state = state_wait_for_reset;
       break;
