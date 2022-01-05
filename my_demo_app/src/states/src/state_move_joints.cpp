@@ -31,7 +31,7 @@ state_move_joints::~state_move_joints(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
-state_move_joints::status state_move_joints::onEnter(input_keys_& input_keys){
+state_move_joints::status state_move_joints::onEnter(input_keys_type& input_keys){
 
   state_move_joints::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
@@ -132,7 +132,7 @@ state_move_joints::outcomes state_move_joints::execute(void){
 
 
 /* do not modify this member function */
-state_move_joints::outcomes state_move_joints::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+state_move_joints::outcomes state_move_joints::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -165,7 +165,7 @@ state_move_joints::outcomes state_move_joints::simpleEexecute(input_keys_& input
 }
 
 
-state_move_joints::output_keys_ state_move_joints::onExit(){
+state_move_joints::output_keys_type state_move_joints::onExit(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 

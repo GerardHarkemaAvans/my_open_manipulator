@@ -31,7 +31,7 @@ state_get_tf_transform::~state_get_tf_transform(){
 }
 
 
-state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_& input_keys){
+state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_type& input_keys){
 
   state_get_tf_transform::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
@@ -88,7 +88,7 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
 }
 
 /* do not modify this member function */
-state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -120,7 +120,7 @@ state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_ke
   return(return_value);
 }
 
-state_get_tf_transform::output_keys_ state_get_tf_transform::onExit(){
+state_get_tf_transform::output_keys_type state_get_tf_transform::onExit(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 

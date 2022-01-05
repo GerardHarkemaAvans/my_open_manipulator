@@ -52,22 +52,22 @@ public:
     int dummy;
     // append other keys here
     int repeat_count; /* Example of key */
-  }input_keys_;
+  }input_keys_type;
 
   typedef struct output_keys_struct{
     int dummy;
     // append other keys here
-  }output_keys_;
+  }output_keys_type;
 
   typedef struct user_data_struct{
-    input_keys_ input_keys;
-    output_keys_ output_keys;
-  }user_data_;
+    input_keys_type input_keys;
+    output_keys_type output_keys;
+  }user_data_type;
 
 protected:
   ros::NodeHandle node_handle;
   state  state_ = idle;
-  user_data_ user_data;
+  user_data_type user_data;
   string state_object_name;
   execution_state execution_state_ = execution_wait_for_start;
   outcomes execution_return_value;
@@ -82,13 +82,13 @@ public:
   ~state_template();
 
   // Starten van de state
-  status onEnter(input_keys_& input_keys);
+  status onEnter(input_keys_type& input_keys);
   // Executeren van de state, state is actief zolang outcome == outcomes_busy
   outcomes execute(void);
 
-  outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
+  outcomes simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
   // Einde van de state
-  output_keys_ onExit(void);
+  output_keys_type onExit(void);
   // Afbeken van de state
   status onStop(void);
   // Tijdelijk de state stopzetten

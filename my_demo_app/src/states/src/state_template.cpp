@@ -31,7 +31,7 @@ state_template::~state_template(){
 }
 
 
-state_template::status state_template::onEnter(input_keys_& input_keys){
+state_template::status state_template::onEnter(input_keys_type& input_keys){
 
   state_template::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
@@ -65,7 +65,7 @@ state_template::outcomes state_template::execute(void){
 }
 
 /* do not modify this member function */
-state_template::outcomes state_template::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+state_template::outcomes state_template::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -97,7 +97,7 @@ state_template::outcomes state_template::simpleEexecute(input_keys_& input_keys,
 }
 
 
-state_template::output_keys_ state_template::onExit(){
+state_template::output_keys_type state_template::onExit(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 

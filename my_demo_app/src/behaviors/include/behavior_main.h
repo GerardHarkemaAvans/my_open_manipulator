@@ -54,7 +54,7 @@ public:
     // add states here
     state_finshed,
     state_failed,
-    state_abort,
+//    state_abort,
     state_wait_for_reset
   }state;
 
@@ -69,17 +69,17 @@ public:
   typedef struct input_keys_struct{
     int dummy;
     // append other keys here
-  }input_keys_;
+  }input_keys_type;
 
   typedef struct output_keys_struct{
     int dummy;
     // append other keys here
-  }output_keys_;
+  }output_keys_type;
 
   typedef struct user_data_struct{
-    input_keys_ input_keys;
-    output_keys_ output_keys;
-  }user_data_;
+    input_keys_type input_keys;
+    output_keys_type output_keys;
+  }user_data_type;
 
 protected:
   ros::NodeHandle node_handle;
@@ -101,17 +101,17 @@ protected:
   state_srdf_to_moveit* srdf_to_moveit;
   state_template* s_template;
   behavior_go_pose_ik *go_pose_ik;
-  user_data_ user_data;
+  user_data_type user_data;
 
 
 public:
   behavior_main(const std::string& state_object_name, bool simple_execution_mode);
   ~behavior_main();
 
-  status onEnter(input_keys_ &input_keys);
-  outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
+  status onEnter(input_keys_type &input_keys);
+  outcomes simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
   outcomes execute();
-  output_keys_ onExit();
+  output_keys_type onExit();
 
 #if 0 // not implmented yet
   status abort();

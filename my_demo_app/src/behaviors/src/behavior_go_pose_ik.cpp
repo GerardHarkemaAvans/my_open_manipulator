@@ -47,15 +47,15 @@ void behavior_go_pose_ik::stateHandler(){
     case state_idle:
       break;
     case state_start:
-      _state = state_get_transform;
+      _state = state_get_pose_transform;
       break;
-    case state_get_transform:
+    case state_get_pose_transform:
       {
-        state_get_tf_transform::input_keys_ input_key;
+        state_get_tf_transform::input_keys_type input_key;
         input_key.target_frame = user_data.input_keys.target_frame;
         input_key.source_frame = user_data.input_keys.source_frame;
-        state_get_tf_transform::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_get_transform");
+        state_get_tf_transform::output_keys_type output_key;
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_get_pose_transform");
         switch(get_tf_transform->simpleEexecute(input_key, output_key)){
           case state_get_tf_transform::outcomes_busy:
             /* Do nothing */
@@ -68,7 +68,7 @@ void behavior_go_pose_ik::stateHandler(){
             DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "z = %f/n", output_key.transform.pose.position.z);
             DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "header = %s/n", output_key.transform.header.frame_id.c_str());
 #endif
-            _state = state_ik_calculate_joints;
+            _state = state_ik_calculate_pose_joints;
             break;
           case state_get_tf_transform::outcomes_failed:
             _state = state_failed;
@@ -76,16 +76,16 @@ void behavior_go_pose_ik::stateHandler(){
         }
       }
       break;
-    case state_ik_calculate_joints:
+    case state_ik_calculate_pose_joints:
       {
-        state_ik_get_joints_from_pose::input_keys_ input_key;
+        state_ik_get_joints_from_pose::input_keys_type input_key;
         input_key.pose = object_pose;
         input_key.tool_link = "end_effector_link";
         input_key.group_name = "arm";
         input_key.offset = 0.01;
         input_key.rotation = 1.00;//1.57;
-        state_ik_get_joints_from_pose::output_keys_ output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_ik_calculate_joints");
+        state_ik_get_joints_from_pose::output_keys_type output_key;
+        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_ik_calculate_pose_joints");
         switch(ik_get_joints_from_pose->simpleEexecute(input_key, output_key)){
           case state_ik_get_joints_from_pose::outcomes_busy:
             /* Do nothing */
@@ -104,9 +104,9 @@ void behavior_go_pose_ik::stateHandler(){
       break;
     case state_go_pose:
       {
-        state_move_joints::input_keys_ input_key;
+        state_move_joints::input_keys_type input_key;
         input_key.joints = this->object_pose_joints;
-        state_move_joints::output_keys_ output_key;
+        state_move_joints::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_pose");
         switch(move_joints->simpleEexecute(input_key, output_key)){
           case state_move_joints::outcomes_busy:
@@ -143,7 +143,7 @@ void behavior_go_pose_ik::stateCallback(const ros::TimerEvent&){
     behavior_go_pose_ik::stateHandler();
 }
 
-behavior_go_pose_ik::status behavior_go_pose_ik::onEnter(input_keys_ &input_keys){
+behavior_go_pose_ik::status behavior_go_pose_ik::onEnter(input_keys_type &input_keys){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onEnter\n", behavior_object_name.c_str());
   behavior_go_pose_ik::status return_code = status_succes;
@@ -151,7 +151,7 @@ behavior_go_pose_ik::status behavior_go_pose_ik::onEnter(input_keys_ &input_keys
   /* Write here your code */
 
   user_data.input_keys = input_keys;
-  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Starting");
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Starting");
   _state = state_start;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::onEnter\n", behavior_object_name.c_str());
@@ -170,7 +170,7 @@ behavior_go_pose_ik::outcomes behavior_go_pose_ik::execute(){
   return(_outcomes);
 }
 
-behavior_go_pose_ik::output_keys_ behavior_go_pose_ik::onExit(){
+behavior_go_pose_ik::output_keys_type behavior_go_pose_ik::onExit(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onExit\n", behavior_object_name.c_str());
 
   /* Write here your code */
@@ -180,7 +180,7 @@ behavior_go_pose_ik::output_keys_ behavior_go_pose_ik::onExit(){
 }
 
 /* do not modify this member function */
-behavior_go_pose_ik::outcomes behavior_go_pose_ik::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+behavior_go_pose_ik::outcomes behavior_go_pose_ik::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){

@@ -45,8 +45,8 @@ public:
     state_idle = 0,
     state_start,
     // add states here
-    state_get_transform,
-    state_ik_calculate_joints,
+    state_get_pose_transform,
+    state_ik_calculate_pose_joints,
     state_go_pose,
     // add states here
     state_finshed,
@@ -66,17 +66,17 @@ public:
   typedef struct input_keys_struct{
     string target_frame;
     string source_frame;
-  }input_keys_;
+  }input_keys_type;
 
   typedef struct output_keys_struct{
     int dummy;
     // append other keys here
-  }output_keys_;
+  }output_keys_type;
 
   typedef struct user_data_struct{
-    input_keys_ input_keys;
-    output_keys_ output_keys;
-  }user_data_;
+    input_keys_type input_keys;
+    output_keys_type output_keys;
+  }user_data_type;
 
 protected:
   ros::NodeHandle node_handle;
@@ -98,7 +98,7 @@ protected:
   state_move_joints* move_joints;
   state_get_tf_transform* get_tf_transform;
   state_ik_get_joints_from_pose* ik_get_joints_from_pose;
-  user_data_ user_data;
+  user_data_type user_data;
 
   geometry_msgs::PoseStamped object_pose;
   std::map<std::string, double> object_pose_joints;
@@ -107,10 +107,10 @@ public:
   behavior_go_pose_ik(const std::string& state_object_name, bool simple_execution_mode);
   ~behavior_go_pose_ik();
 
-  status onEnter(input_keys_ &input_keys);
-  outcomes simpleEexecute(input_keys_& input_keys, output_keys_& output_keys);
+  status onEnter(input_keys_type &input_keys);
+  outcomes simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
   outcomes execute();
-  output_keys_ onExit();
+  output_keys_type onExit();
 
 #if 0 // not implmented yet
   status abort();

@@ -38,7 +38,7 @@ state_ik_get_joints_from_pose::~state_ik_get_joints_from_pose(){
 }
 
 
-state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(input_keys_& input_keys){
+state_ik_get_joints_from_pose::status state_ik_get_joints_from_pose::onEnter(input_keys_type& input_keys){
 
   state_ik_get_joints_from_pose::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
@@ -141,7 +141,7 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::execute(v
 }
 
 /* do not modify this member function */
-state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -173,7 +173,7 @@ state_ik_get_joints_from_pose::outcomes state_ik_get_joints_from_pose::simpleEex
 }
 
 
-state_ik_get_joints_from_pose::output_keys_ state_ik_get_joints_from_pose::onExit(){
+state_ik_get_joints_from_pose::output_keys_type state_ik_get_joints_from_pose::onExit(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 

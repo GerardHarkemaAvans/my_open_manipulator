@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="moveit_flexbe_demo">
+<behavior name="behaivior_main">
 
-	<executable package_path="my_demo_behaviors.moveit_flexbe_demo_sm" class="moveit_flexbe_demoSM" />
+	<executable package_path="my_demo_behaviors.behaivior_main_sm" class="behaivior_mainSM" />
 	<tagstring></tagstring>
 	<author>Gerard Harkema</author>
 	<date>December 12, 2021</date>
@@ -12,6 +12,7 @@
 
 
 	<!-- Contained Behaviors -->
+	<contains name="behaivior_go_pose_ik" />
 
 	<!-- Available Parameters -->
 

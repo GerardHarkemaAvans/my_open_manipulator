@@ -14,8 +14,8 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "behavior_node");
   ros::NodeHandle node_handle("");
 
-  behavior_main::input_keys_ input_key;
-  behavior_main::output_keys_ output_key;
+  behavior_main::input_keys_type input_key;
+  behavior_main::output_keys_type output_key;
 
   input_key.dummy = 0;
   bool abort_flag = false;

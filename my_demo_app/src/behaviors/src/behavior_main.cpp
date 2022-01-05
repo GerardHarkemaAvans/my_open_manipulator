@@ -50,9 +50,9 @@ void behavior_main::stateHandler(){
       break;
     case state_go_home:
       {
-        state_srdf_to_moveit::input_keys_ input_key;
+        state_srdf_to_moveit::input_keys_type input_key;
         input_key.config_name = "home";
-        state_srdf_to_moveit::output_keys_ output_key;
+        state_srdf_to_moveit::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_home");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
@@ -69,9 +69,9 @@ void behavior_main::stateHandler(){
       break;
     case state_go_left:
       {
-        state_srdf_to_moveit::input_keys_ input_key;
+        state_srdf_to_moveit::input_keys_type input_key;
         input_key.config_name = "left";
-        state_srdf_to_moveit::output_keys_ output_key;
+        state_srdf_to_moveit::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_left");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
@@ -88,10 +88,10 @@ void behavior_main::stateHandler(){
     break;
     case state_go_pose_ik:
       {
-        behavior_go_pose_ik::input_keys_ input_key;
+        behavior_go_pose_ik::input_keys_type input_key;
         input_key.target_frame = "world";
         input_key.source_frame = "ik_testpoint";
-        behavior_go_pose_ik::output_keys_ output_key;
+        behavior_go_pose_ik::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_pose ik");
         switch(go_pose_ik->simpleEexecute(input_key, output_key)){
           case behavior_go_pose_ik::outcomes_busy:
@@ -108,9 +108,9 @@ void behavior_main::stateHandler(){
       break;
     case state_go_right:
       {
-        state_srdf_to_moveit::input_keys_ input_key;
+        state_srdf_to_moveit::input_keys_type input_key;
         input_key.config_name = "right";
-        state_srdf_to_moveit::output_keys_ output_key;
+        state_srdf_to_moveit::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_right");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
@@ -127,9 +127,9 @@ void behavior_main::stateHandler(){
       break;
     case state_go_resting:
       {
-        state_srdf_to_moveit::input_keys_ input_key;
+        state_srdf_to_moveit::input_keys_type input_key;
         input_key.config_name = "resting";
-        state_srdf_to_moveit::output_keys_ output_key;
+        state_srdf_to_moveit::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_resting");
         switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
           case state_srdf_to_moveit::outcomes_busy:
@@ -166,7 +166,7 @@ void behavior_main::stateCallback(const ros::TimerEvent&){
     behavior_main::stateHandler();
 }
 
-behavior_main::status behavior_main::onEnter(input_keys_ &input_keys){
+behavior_main::status behavior_main::onEnter(input_keys_type &input_keys){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onEnter\n", behavior_object_name.c_str());
   behavior_main::status return_code = status_succes;
@@ -174,7 +174,7 @@ behavior_main::status behavior_main::onEnter(input_keys_ &input_keys){
   /* Write here your code */
 
   user_data.input_keys = input_keys;
-  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Starting");
+  DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Starting");
   _state = state_start;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::onEnter\n", behavior_object_name.c_str());
@@ -193,7 +193,7 @@ behavior_main::outcomes behavior_main::execute(){
   return(_outcomes);
 }
 
-behavior_main::output_keys_ behavior_main::onExit(){
+behavior_main::output_keys_type behavior_main::onExit(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onExit\n", behavior_object_name.c_str());
 
   /* Write here your code */
@@ -203,7 +203,7 @@ behavior_main::output_keys_ behavior_main::onExit(){
 }
 
 /* do not modify this member function */
-behavior_main::outcomes behavior_main::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+behavior_main::outcomes behavior_main::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = status_busy;
 
   switch(execution_state_){

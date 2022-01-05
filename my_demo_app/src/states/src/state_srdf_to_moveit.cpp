@@ -31,7 +31,7 @@ state_srdf_to_moveit::~state_srdf_to_moveit(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
-state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_& input_keys){
+state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_type& input_keys){
 
   state_srdf_to_moveit::status return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
@@ -133,7 +133,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
 
 /* do not modify this member function */
-state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_& input_keys, output_keys_& output_keys){
+state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -166,7 +166,7 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_&
 }
 
 
-state_srdf_to_moveit::output_keys_ state_srdf_to_moveit::onExit(){
+state_srdf_to_moveit::output_keys_type state_srdf_to_moveit::onExit(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onExit\n", state_object_name.c_str());
 
