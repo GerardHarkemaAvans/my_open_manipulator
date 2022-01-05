@@ -1,5 +1,5 @@
 /*******************************************************************************
-File: behavior_main.cpp
+File: behavior_template.cpp
 Version: 1.0
 Authour: G A Harkema (ga.harkeme@avans.nl)
 Date: december 2021
@@ -7,11 +7,11 @@ Purpose:
 Implementation (template) voor een behavior definitie welke gebruikt kan worden
 bij een statemachine.
 *******************************************************************************/
-#include "../include/behavior_main.h"
+#include "../include/behavior_template.h"
 
 #define DEBUG_ITEMS       DEBUG_NONE | DEBUG_BEHAVIORS_STATES//| DEBUG_BEHAVIORS | DEBUG_CUSTOM
 
-behavior_main::behavior_main(const std::string& behavior_object_name, bool simple_execution_mode)
+behavior_template::behavior_template(const std::string& behavior_object_name, bool simple_execution_mode)
 : node_handle(""),
   priv_node_handle("~")
 {
@@ -21,17 +21,17 @@ behavior_main::behavior_main(const std::string& behavior_object_name, bool simpl
   this->simple_execution_mode = simple_execution_mode;
 
   /* Write here your code */
-  srdf_to_moveit = new state_srdf_to_moveit("srdf_to_moveit", "arm");
-  go_pose_ik = new behavior_go_pose_ik("go_pose_ik", true);
+  state1 = new state_template("state1");
+  state2 = new state_template("state2");
 
   if(!simple_execution_mode)
     state_timer = node_handle.createTimer(ros::Duration(0.100)/*100ms*/,
-                                            &behavior_main::stateCallback,
+                                            &behavior_template::stateCallback,
                                             this);
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::construcor\n", behavior_object_name.c_str());
 }
 
-behavior_main::~behavior_main()
+behavior_template::~behavior_template()
 {
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::destructor\n", behavior_object_name.c_str());
@@ -41,109 +41,51 @@ behavior_main::~behavior_main()
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::destructor\n", behavior_object_name.c_str());
 }
 
-void behavior_main::stateHandler(){
+void behavior_template::stateHandler(){
   switch(state){
     case state_idle:
       break;
     case state_start:
-      state = state_go_home;
+      state = state_1;
       break;
-    case state_go_home:
+    case state_1:
       {
-        state_srdf_to_moveit::input_keys_type input_key;
-        input_key.config_name = "home";
-        state_srdf_to_moveit::output_keys_type output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_home");
-        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
-          case state_srdf_to_moveit::outcomes_busy:
-            /* Do nothing */
-            break;
-          case state_srdf_to_moveit::outcomes_done:
-            state = state_go_left;
-            break;
-          case state_srdf_to_moveit::outcomes_failed:
-            state = state_failed;
-            break;
-        }
-      }
-      break;
-    case state_go_left:
-      {
-        state_srdf_to_moveit::input_keys_type input_key;
-        input_key.config_name = "left";
-        state_srdf_to_moveit::output_keys_type output_key;
+        state_template::input_keys_type input_key;
+        input_key.dummy = 0;
+        input_key.repeat_count = 3;
+        state_template::output_keys_type output_key;
         DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_left");
-        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
-          case state_srdf_to_moveit::outcomes_busy:
+        switch(state1->simpleEexecute(input_key, output_key)){
+          case state_template::outcomes_busy:
             /* Do nothing */
             break;
-          case state_srdf_to_moveit::outcomes_done:
-            state = state_go_pose_ik;
+          case state_template::outcomes_done:
+            state = state_2;
             break;
-          case state_srdf_to_moveit::outcomes_failed:
+          case state_template::outcomes_failed:
             state = state_failed;
             break;
         }
       }
-    break;
-    case state_go_pose_ik:
-      {
-        behavior_go_pose_ik::input_keys_type input_key;
-        input_key.target_frame = "world";
-        input_key.source_frame = "ik_testpoint";
-        behavior_go_pose_ik::output_keys_type output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_pose ik");
-        switch(go_pose_ik->simpleEexecute(input_key, output_key)){
-          case behavior_go_pose_ik::outcomes_busy:
-            /* Do nothing */
-            break;
-          case behavior_go_pose_ik::outcomes_finshed:
-            state = state_go_right;
-            break;
-          case behavior_go_pose_ik::outcomes_failed:
-            state = state_failed;
-            break;
+      case state_2:
+        {
+          state_template::input_keys_type input_key;
+          input_key.dummy = 0;
+          input_key.repeat_count = 1;
+          state_template::output_keys_type output_key;
+          DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_left");
+          switch(state2->simpleEexecute(input_key, output_key)){
+            case state_template::outcomes_busy:
+              /* Do nothing */
+              break;
+            case state_template::outcomes_done:
+              state = state_finshed;
+              break;
+            case state_template::outcomes_failed:
+              state = state_failed;
+              break;
+          }
         }
-      }
-      break;
-    case state_go_right:
-      {
-        state_srdf_to_moveit::input_keys_type input_key;
-        input_key.config_name = "right";
-        state_srdf_to_moveit::output_keys_type output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_right");
-        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
-          case state_srdf_to_moveit::outcomes_busy:
-            /* Do nothing */
-          break;
-          case state_srdf_to_moveit::outcomes_done:
-          state = state_go_resting;
-          break;
-          case state_srdf_to_moveit::outcomes_failed:
-            state = state_failed;
-          break;
-        }
-      }
-      break;
-    case state_go_resting:
-      {
-        state_srdf_to_moveit::input_keys_type input_key;
-        input_key.config_name = "resting";
-        state_srdf_to_moveit::output_keys_type output_key;
-        DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Executing state_go_resting");
-        switch(srdf_to_moveit->simpleEexecute(input_key, output_key)){
-          case state_srdf_to_moveit::outcomes_busy:
-            /* Do nothing */
-          break;
-          case state_srdf_to_moveit::outcomes_done:
-            state = state_finshed;
-            break;
-          case state_srdf_to_moveit::outcomes_failed:
-            state = state_failed;
-            break;
-        }
-      }
-      break;
     case state_failed:
       DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome outcomes_failed");
       outcomes = outcomes_enum::outcomes_failed;
@@ -161,15 +103,15 @@ void behavior_main::stateHandler(){
   }
 }
 
-void behavior_main::stateCallback(const ros::TimerEvent&){
+void behavior_template::stateCallback(const ros::TimerEvent&){
   if(!simple_execution_mode)
-    behavior_main::stateHandler();
+    behavior_template::stateHandler();
 }
 
-behavior_main::status_enum behavior_main::onEnter(input_keys_type &input_keys){
+behavior_template::status_enum behavior_template::onEnter(input_keys_type &input_keys){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onEnter\n", behavior_object_name.c_str());
-  behavior_main::status_enum return_code = status_succes;
+  behavior_template::status_enum return_code = status_succes;
 
   /* Write here your code */
 
@@ -182,7 +124,7 @@ behavior_main::status_enum behavior_main::onEnter(input_keys_type &input_keys){
 
 }
 
-behavior_main::outcomes_enum behavior_main::execute(){
+behavior_template::outcomes_enum behavior_template::execute(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::execute\n", behavior_object_name.c_str());
 
@@ -193,7 +135,7 @@ behavior_main::outcomes_enum behavior_main::execute(){
   return(outcomes);
 }
 
-behavior_main::output_keys_type behavior_main::onExit(){
+behavior_template::output_keys_type behavior_template::onExit(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onExit\n", behavior_object_name.c_str());
 
   /* Write here your code */
@@ -203,7 +145,7 @@ behavior_main::output_keys_type behavior_main::onExit(){
 }
 
 /* do not modify this member function */
-behavior_main::outcomes_enum behavior_main::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+behavior_template::outcomes_enum behavior_template::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
   outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
@@ -235,7 +177,7 @@ behavior_main::outcomes_enum behavior_main::simpleEexecute(input_keys_type& inpu
 }
 
 #if 0 // not implemted yet
-status_enum behavior_main::abort(){
+status_enum behavior_template::abort(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::abort\n", behavior_object_name.c_str());
 
@@ -246,7 +188,7 @@ status_enum behavior_main::abort(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::abort\n", behavior_object_name.c_str());
 }
 
-status_enum behavior_main::reset(){
+status_enum behavior_template::reset(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::reset\n", behavior_object_name.c_str());
 

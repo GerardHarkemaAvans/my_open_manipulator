@@ -31,9 +31,9 @@ state_template::~state_template(){
 }
 
 
-state_template::status state_template::onEnter(input_keys_type& input_keys){
+state_template::status_enum state_template::onEnter(input_keys_type& input_keys){
 
-  state_template::status return_code = status_succes;
+  state_template::status_enum return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -41,23 +41,23 @@ state_template::status state_template::onEnter(input_keys_type& input_keys){
 
   /* Write here your code */
 
-  state_ = state_template::running;
+  state = state_template::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
 
-state_template::outcomes state_template::execute(void){
+state_template::outcomes_enum state_template::execute(void){
 
-  state_template::outcomes return_value = outcomes_busy;
+  state_template::outcomes_enum return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
   /* Write here your code */
   if(--remaining_count == 0){ /* Example */
     return_value = outcomes_done;
-    state_ = state_template::idle;
+    state = state_template::idle;
   }
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::execute\n", state_object_name.c_str());
@@ -65,13 +65,13 @@ state_template::outcomes state_template::execute(void){
 }
 
 /* do not modify this member function */
-state_template::outcomes state_template::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
-  outcomes return_value = outcomes_busy;
+state_template::outcomes_enum state_template::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+  outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
-        status on_enter_status_ = onEnter(input_keys);
+        status_enum on_enter_status_ = onEnter(input_keys);
         if(on_enter_status_ != status_succes){
           return_value = outcomes_failed;
           break;
@@ -107,9 +107,9 @@ state_template::output_keys_type state_template::onExit(){
   return(user_data.output_keys);
 }
 
-state_template::status state_template::onStop(){
+state_template::status_enum state_template::onStop(){
 
-  state_template::status return_code = status_succes;
+  state_template::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -119,42 +119,42 @@ state_template::status state_template::onStop(){
   return(return_code);
 }
 
-state_template::status state_template::onPause(){
+state_template::status_enum state_template::onPause(){
 
-  state_template::status return_code = status_succes;
+  state_template::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_template::paused;
+  state = state_template::paused;
 
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_template::status state_template::onResume(){
+state_template::status_enum state_template::onResume(){
 
-  state_template::status return_code = status_succes;
+  state_template::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_template::running;
+  state = state_template::running;
 
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_template::state state_template::getState(void){
+state_template::state_enum state_template::getState(void){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::getState\n", state_object_name.c_str());
-  return(state_);
+  return(state);
 }

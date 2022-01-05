@@ -34,13 +34,13 @@ public:
     status_succes = 0,
     status_error
     // append other errors here
-  }status;
+  }status_enum;
 
   typedef enum{
-    status_busy = 0,
-    status_finshed,
-    status_failed
-  }outcomes;
+    outcomes_busy = 0,
+    outcomes_finshed,
+    outcomes_failed
+  }outcomes_enum;
 
   typedef enum{
     state_idle = 0,
@@ -56,14 +56,14 @@ public:
     state_failed,
 //    state_abort,
     state_wait_for_reset
-  }state;
+  }state_enum;
 
   typedef enum{
     execution_wait_for_start = 0,
     execution_execute,
     execution_exit
     // append other errors here
-  }execution_state;
+  }execution_state_enum;
 
 
   typedef struct input_keys_struct{
@@ -88,14 +88,14 @@ protected:
   ros::Timer state_timer;
   void stateCallback(const ros::TimerEvent&);
   void stateHandler(void);
-  execution_state execution_state_ = execution_wait_for_start;
-  outcomes execution_return_value;
+  execution_state_enum execution_state_ = execution_wait_for_start;
+  outcomes_enum execution_return_value;
 
   string behavior_object_name;
   bool simple_execution_mode;
 
-  outcomes _outcomes = outcomes::status_busy;
-  state _state = state::state_idle;
+  outcomes_enum outcomes = outcomes_enum::outcomes_busy;
+  state_enum state = state_enum::state_idle;
 
   // enter here your states type
   state_srdf_to_moveit* srdf_to_moveit;
@@ -108,14 +108,14 @@ public:
   behavior_main(const std::string& state_object_name, bool simple_execution_mode);
   ~behavior_main();
 
-  status onEnter(input_keys_type &input_keys);
-  outcomes simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
-  outcomes execute();
+  status_enum onEnter(input_keys_type &input_keys);
+  outcomes_enum simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
+  outcomes_enum execute();
   output_keys_type onExit();
 
 #if 0 // not implmented yet
-  status abort();
-  status reset();
+  status_enum abort();
+  status_enum reset();
 #endif
 };
 

@@ -31,25 +31,25 @@ state_get_tf_transform::~state_get_tf_transform(){
 }
 
 
-state_get_tf_transform::status state_get_tf_transform::onEnter(input_keys_type& input_keys){
+state_get_tf_transform::status_enum state_get_tf_transform::onEnter(input_keys_type& input_keys){
 
-  state_get_tf_transform::status return_code = status_succes;
+  state_get_tf_transform::status_enum return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
 
   /* Write here your code */
 
-  state_ = state_get_tf_transform::running;
+  state = state_get_tf_transform::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
 
-state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
+state_get_tf_transform::outcomes_enum state_get_tf_transform::execute(void){
 
-  state_get_tf_transform::outcomes return_value = outcomes_busy;
+  state_get_tf_transform::outcomes_enum return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
@@ -81,20 +81,20 @@ state_get_tf_transform::outcomes state_get_tf_transform::execute(void){
     ROS_ERROR("Falid to get transform");
     return_value = outcomes_failed;
   }
-  state_ = state_get_tf_transform::idle;
+  state = state_get_tf_transform::idle;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::execute\n", state_object_name.c_str());
   return(return_value);
 }
 
 /* do not modify this member function */
-state_get_tf_transform::outcomes state_get_tf_transform::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
-  outcomes return_value = outcomes_busy;
+state_get_tf_transform::outcomes_enum state_get_tf_transform::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+  outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
-        status on_enter_status_ = onEnter(input_keys);
+        status_enum on_enter_status_ = onEnter(input_keys);
         if(on_enter_status_ != status_succes){
           return_value = outcomes_failed;
           break;
@@ -130,9 +130,9 @@ state_get_tf_transform::output_keys_type state_get_tf_transform::onExit(){
   return(user_data.output_keys);
 }
 
-state_get_tf_transform::status state_get_tf_transform::onStop(){
+state_get_tf_transform::status_enum state_get_tf_transform::onStop(){
 
-  state_get_tf_transform::status return_code = status_succes;
+  state_get_tf_transform::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -142,42 +142,42 @@ state_get_tf_transform::status state_get_tf_transform::onStop(){
   return(return_code);
 }
 
-state_get_tf_transform::status state_get_tf_transform::onPause(){
+state_get_tf_transform::status_enum state_get_tf_transform::onPause(){
 
-  state_get_tf_transform::status return_code = status_succes;
+  state_get_tf_transform::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_get_tf_transform::paused;
+  state = state_get_tf_transform::paused;
 
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_get_tf_transform::status state_get_tf_transform::onResume(){
+state_get_tf_transform::status_enum state_get_tf_transform::onResume(){
 
-  state_get_tf_transform::status return_code = status_succes;
+  state_get_tf_transform::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_get_tf_transform::running;
+  state = state_get_tf_transform::running;
 
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_get_tf_transform::state state_get_tf_transform::getState(void){
+state_get_tf_transform::state_enum state_get_tf_transform::getState(void){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Laeving %s::getState\n", state_object_name.c_str());
-  return(state_);
+  return(state);
 }

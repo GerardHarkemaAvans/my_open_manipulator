@@ -43,11 +43,11 @@ behavior_go_pose_ik::~behavior_go_pose_ik()
 }
 
 void behavior_go_pose_ik::stateHandler(){
-  switch(_state){
+  switch(state){
     case state_idle:
       break;
     case state_start:
-      _state = state_get_pose_transform;
+      state = state_get_pose_transform;
       break;
     case state_get_pose_transform:
       {
@@ -68,10 +68,10 @@ void behavior_go_pose_ik::stateHandler(){
             DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "z = %f/n", output_key.transform.pose.position.z);
             DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "header = %s/n", output_key.transform.header.frame_id.c_str());
 #endif
-            _state = state_ik_calculate_pose_joints;
+            state = state_ik_calculate_pose_joints;
             break;
           case state_get_tf_transform::outcomes_failed:
-            _state = state_failed;
+            state = state_failed;
             break;
         }
       }
@@ -92,10 +92,10 @@ void behavior_go_pose_ik::stateHandler(){
             break;
           case state_ik_get_joints_from_pose::outcomes_done:
             this->object_pose_joints = output_key.joints;
-            _state = state_go_pose;
+            state = state_go_pose;
             break;
           case state_ik_get_joints_from_pose::outcomes_failed:
-            _state = state_failed;
+            state = state_failed;
             break;
           default:
             break;
@@ -113,23 +113,23 @@ void behavior_go_pose_ik::stateHandler(){
             /* Do nothing */
             break;
           case state_move_joints::outcomes_done:
-            _state = state_finshed;
+            state = state_finshed;
             break;
           case state_move_joints::outcomes_failed:
-            _state = state_failed;
+            state = state_failed;
             break;
         }
       }
       break;
     case state_failed:
       DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome outcomes_failed");
-      _outcomes = outcomes::outcomes_failed;
-      _state = state_wait_for_reset;
+      outcomes = outcomes_enum::outcomes_failed;
+      state = state_wait_for_reset;
       break;
     case state_finshed:
       DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Ending with outcome finsihed");
-      _outcomes = outcomes::outcomes_finshed;
-      _state = state_wait_for_reset;
+      outcomes = outcomes_enum::outcomes_finshed;
+      state = state_wait_for_reset;
       break;
     case state_wait_for_reset:
       break;
@@ -143,23 +143,23 @@ void behavior_go_pose_ik::stateCallback(const ros::TimerEvent&){
     behavior_go_pose_ik::stateHandler();
 }
 
-behavior_go_pose_ik::status behavior_go_pose_ik::onEnter(input_keys_type &input_keys){
+behavior_go_pose_ik::status_enum behavior_go_pose_ik::onEnter(input_keys_type &input_keys){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::onEnter\n", behavior_object_name.c_str());
-  behavior_go_pose_ik::status return_code = status_succes;
+  behavior_go_pose_ik::status_enum return_code = status_succes;
 
   /* Write here your code */
 
   user_data.input_keys = input_keys;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s: %s\n", behavior_object_name.c_str(), "Starting");
-  _state = state_start;
+  state = state_start;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::onEnter\n", behavior_object_name.c_str());
   return(return_code);
 
 }
 
-behavior_go_pose_ik::outcomes behavior_go_pose_ik::execute(){
+behavior_go_pose_ik::outcomes_enum behavior_go_pose_ik::execute(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::execute\n", behavior_object_name.c_str());
 
@@ -167,7 +167,7 @@ behavior_go_pose_ik::outcomes behavior_go_pose_ik::execute(){
   if(simple_execution_mode) stateHandler();
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::execute\n", behavior_object_name.c_str());
-  return(_outcomes);
+  return(outcomes);
 }
 
 behavior_go_pose_ik::output_keys_type behavior_go_pose_ik::onExit(){
@@ -180,13 +180,13 @@ behavior_go_pose_ik::output_keys_type behavior_go_pose_ik::onExit(){
 }
 
 /* do not modify this member function */
-behavior_go_pose_ik::outcomes behavior_go_pose_ik::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
-  outcomes return_value = outcomes_busy;
+behavior_go_pose_ik::outcomes_enum behavior_go_pose_ik::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+  outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
-        status on_enter_status_ = onEnter(input_keys);
+        status_enum on_enter_status_ = onEnter(input_keys);
         if(on_enter_status_ != status_succes){
           return_value = outcomes_failed;
           break;
@@ -212,25 +212,25 @@ behavior_go_pose_ik::outcomes behavior_go_pose_ik::simpleEexecute(input_keys_typ
 }
 
 #if 0 // not implemted yet
-status behavior_go_pose_ik::abort(){
+status_enum behavior_go_pose_ik::abort(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::abort\n", behavior_object_name.c_str());
 
   /* Write here your code */
 
-  _state = state_abort;
+  state = state_abort;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::abort\n", behavior_object_name.c_str());
 }
 
-status behavior_go_pose_ik::reset(){
+status_enum behavior_go_pose_ik::reset(){
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Entering %s::reset\n", behavior_object_name.c_str());
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS_STATES, "%s\n", "Resetiing");
   /* Write here your code */
 
-  _state = state_idle;
+  state = state_idle;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_BEHAVIORS, "Leaving %s::reset\n", behavior_object_name.c_str());
 }

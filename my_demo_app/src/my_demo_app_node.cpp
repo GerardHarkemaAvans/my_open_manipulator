@@ -31,16 +31,16 @@ int main(int argc, char **argv)
   {
     ros::spinOnce();
     switch(my_behavior.simpleEexecute(input_key, output_key)){
-      case behavior_main::status_busy:
+      case behavior_main::outcomes_busy:
         // Do nothing
         break;
-      case behavior_main::status_finshed:
+      case behavior_main::outcomes_finshed:
         abort_flag = true;
         std::cout << "my_app finished" << std::endl;
         break;
-      case behavior_main::status_failed:
+      case behavior_main::outcomes_failed:
         abort_flag = true;
-        std::cout << "my_app finished with status outcomes_failed" << std::endl;
+        std::cout << "my_app finished with status_enum outcomes_failed" << std::endl;
         break;
     }
     if(abort_flag) break;

@@ -24,14 +24,14 @@ public:
     status_succes = 0,
     status_error
     // append other errors here
-  }status;
+  }status_enum;
 
   typedef enum{
     idle = 0,
     running,
     paused
     // append other errors here
-  }state;
+  }state_enum;
 
 
   typedef enum{
@@ -39,14 +39,14 @@ public:
     execution_execute,
     execution_exit
     // append other errors here
-  }execution_state;
+  }execution_state_enum;
 
   typedef enum{
     outcomes_busy = 0,
     outcomes_done,
     outcomes_failed
     // append other outcomes here
-  }outcomes;
+  }outcomes_enum;
 
 
   typedef struct input_keys_struct{
@@ -66,13 +66,13 @@ public:
 
 protected:
   ros::NodeHandle node_handle;
-  state  state_ = idle;
+  state_enum  state = idle;
   user_data_type user_data;
   string state_object_name;
   moveit::planning_interface::MoveGroupInterface* move_group;
   robot_state::RobotStatePtr move_group_state;
-  execution_state execution_state_ = execution_wait_for_start;
-  outcomes execution_return_value;
+  execution_state_enum execution_state_ = execution_wait_for_start;
+  outcomes_enum execution_return_value;
 
 public:
   // constructor
@@ -81,21 +81,21 @@ public:
   ~state_move_joints();
 
   // Starten van de state
-  status onEnter(input_keys_type& input_keys);
+  status_enum onEnter(input_keys_type& input_keys);
   // Executeren van de state, state is actief zolang outcome == outcomes_busy
-  outcomes execute(void);
+  outcomes_enum execute(void);
 
-  outcomes simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
+  outcomes_enum simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
   // Einde van de state
   output_keys_type onExit(void);
   // Afbeken van de state
-  status onStop(void);
+  status_enum onStop(void);
   // Tijdelijk de state stopzetten
-  status onPause(void);
+  status_enum onPause(void);
   // Voortzetten na pauze
-  status onResume(void);
+  status_enum onResume(void);
   // Stte van de toestand
-  state getState(void);
+  state_enum getState(void);
 };
 
 #endif // _STATE_MOVE_JOINTS_H_

@@ -31,9 +31,9 @@ state_srdf_to_moveit::~state_srdf_to_moveit(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
-state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_type& input_keys){
+state_srdf_to_moveit::status_enum state_srdf_to_moveit::onEnter(input_keys_type& input_keys){
 
-  state_srdf_to_moveit::status return_code = status_succes;
+  state_srdf_to_moveit::status_enum return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -96,16 +96,16 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onEnter(input_keys_type& inpu
       ROS_ERROR("Unable to start move_group");
     }
 
-  state_ = state_srdf_to_moveit::running;
+  state = state_srdf_to_moveit::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
 
-state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
+state_srdf_to_moveit::outcomes_enum state_srdf_to_moveit::execute(void){
 
-  state_srdf_to_moveit::outcomes return_value = outcomes_busy;
+  state_srdf_to_moveit::outcomes_enum return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
@@ -119,13 +119,12 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 		}
 	  else{
       execute_status=msg->status.status;
-      //ROS_INFO("%i execute status",execute_status);
-      if(execute_status==3){ // Wat als andere status?
+      //ROS_INFO("%i execute status_enum",execute_status);
+      if(execute_status==3){ // Wat als andere status_enum?
         return_value = outcomes_done;
       }
     }
 	}
-
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::execute\n", state_object_name.c_str());
   return(return_value);
@@ -133,13 +132,13 @@ state_srdf_to_moveit::outcomes state_srdf_to_moveit::execute(void){
 
 
 /* do not modify this member function */
-state_srdf_to_moveit::outcomes state_srdf_to_moveit::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
-  outcomes return_value = outcomes_busy;
+state_srdf_to_moveit::outcomes_enum state_srdf_to_moveit::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+  outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
-        status on_enter_status_ = onEnter(input_keys);
+        status_enum on_enter_status_ = onEnter(input_keys);
         if(on_enter_status_ != status_succes){
           return_value = outcomes_failed;
           break;
@@ -176,9 +175,9 @@ state_srdf_to_moveit::output_keys_type state_srdf_to_moveit::onExit(){
   return(user_data.output_keys);
 }
 
-state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
+state_srdf_to_moveit::status_enum state_srdf_to_moveit::onStop(){
 
-  state_srdf_to_moveit::status return_code = status_succes;
+  state_srdf_to_moveit::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -188,39 +187,39 @@ state_srdf_to_moveit::status state_srdf_to_moveit::onStop(){
   return(return_code);
 }
 
-state_srdf_to_moveit::status state_srdf_to_moveit::onPause(){
+state_srdf_to_moveit::status_enum state_srdf_to_moveit::onPause(){
 
-  state_srdf_to_moveit::status return_code = status_succes;
+  state_srdf_to_moveit::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_srdf_to_moveit::paused;
+  state = state_srdf_to_moveit::paused;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_srdf_to_moveit::status state_srdf_to_moveit::onResume(){
+state_srdf_to_moveit::status_enum state_srdf_to_moveit::onResume(){
 
-  state_srdf_to_moveit::status return_code = status_succes;
+  state_srdf_to_moveit::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_srdf_to_moveit::running;
+  state = state_srdf_to_moveit::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_srdf_to_moveit::state state_srdf_to_moveit::getState(void){
+state_srdf_to_moveit::state_enum state_srdf_to_moveit::getState(void){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::getState\n", state_object_name.c_str());
-  return(state_);
+  return(state);
 }

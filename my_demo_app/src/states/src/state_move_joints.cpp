@@ -31,9 +31,9 @@ state_move_joints::~state_move_joints(){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::destrucor\n", state_object_name.c_str());
 }
 
-state_move_joints::status state_move_joints::onEnter(input_keys_type& input_keys){
+state_move_joints::status_enum state_move_joints::onEnter(input_keys_type& input_keys){
 
-  state_move_joints::status return_code = status_succes;
+  state_move_joints::status_enum return_code = status_succes;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onEnter\n", state_object_name.c_str());
 
   user_data.input_keys = input_keys;
@@ -95,16 +95,16 @@ state_move_joints::status state_move_joints::onEnter(input_keys_type& input_keys
       ROS_ERROR("Unable to start move_group");
     }
 
-  state_ = state_move_joints::running;
+  state = state_move_joints::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onEnter\n", state_object_name.c_str());
   return(return_code);
 }
 
 
-state_move_joints::outcomes state_move_joints::execute(void){
+state_move_joints::outcomes_enum state_move_joints::execute(void){
 
-  state_move_joints::outcomes return_value = outcomes_busy;
+  state_move_joints::outcomes_enum return_value = outcomes_busy;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::execute\n", state_object_name.c_str());
 
@@ -118,8 +118,8 @@ state_move_joints::outcomes state_move_joints::execute(void){
 		}
 	  else{
       execute_status=msg->status.status;
-      //ROS_INFO("%i execute status",execute_status);
-      if(execute_status==3){ // Wat als andere status?
+      //ROS_INFO("%i execute status_enum",execute_status);
+      if(execute_status==3){ // Wat als andere status_enum?
         return_value = outcomes_done;
       }
     }
@@ -132,13 +132,13 @@ state_move_joints::outcomes state_move_joints::execute(void){
 
 
 /* do not modify this member function */
-state_move_joints::outcomes state_move_joints::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
-  outcomes return_value = outcomes_busy;
+state_move_joints::outcomes_enum state_move_joints::simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys){
+  outcomes_enum return_value = outcomes_busy;
 
   switch(execution_state_){
     case execution_wait_for_start:
       {
-        status on_enter_status_ = onEnter(input_keys);
+        status_enum on_enter_status_ = onEnter(input_keys);
         if(on_enter_status_ != status_succes){
           return_value = outcomes_failed;
           break;
@@ -175,9 +175,9 @@ state_move_joints::output_keys_type state_move_joints::onExit(){
   return(user_data.output_keys);
 }
 
-state_move_joints::status state_move_joints::onStop(){
+state_move_joints::status_enum state_move_joints::onStop(){
 
-  state_move_joints::status return_code = status_succes;
+  state_move_joints::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onStop\n", state_object_name.c_str());
 
@@ -187,39 +187,39 @@ state_move_joints::status state_move_joints::onStop(){
   return(return_code);
 }
 
-state_move_joints::status state_move_joints::onPause(){
+state_move_joints::status_enum state_move_joints::onPause(){
 
-  state_move_joints::status return_code = status_succes;
+  state_move_joints::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onPause\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_move_joints::paused;
+  state = state_move_joints::paused;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onPause\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_move_joints::status state_move_joints::onResume(){
+state_move_joints::status_enum state_move_joints::onResume(){
 
-  state_move_joints::status return_code = status_succes;
+  state_move_joints::status_enum return_code = status_succes;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::onResume\n", state_object_name.c_str());
 
   /* Write here your code */
 
-  state_ = state_move_joints::running;
+  state = state_move_joints::running;
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::onResume\n", state_object_name.c_str());
   return(return_code);
 }
 
-state_move_joints::state state_move_joints::getState(void){
+state_move_joints::state_enum state_move_joints::getState(void){
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::getState\n", state_object_name.c_str());
 
   /* Write here your code */
 
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Leaving %s::getState\n", state_object_name.c_str());
-  return(state_);
+  return(state);
 }
