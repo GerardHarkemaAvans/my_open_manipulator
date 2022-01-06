@@ -118,11 +118,12 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- include
+  include
+  .
   ${catkin_INCLUDE_DIRS}
-    roscpp
-    sensor_msgs
-    open_manipulator_msgs
+  roscpp
+  sensor_msgs
+  open_manipulator_msgs
 
 )
 
@@ -143,8 +144,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}
    src/my_app_node.cpp
-   src/behavior/behavior_template.cpp
-   src/states/state_template.cpp
+   src/behaviors/src/behavior_template.cpp
+   src/states/src/state_template.cpp
  )
 
 ## Rename C++ executable without prefix

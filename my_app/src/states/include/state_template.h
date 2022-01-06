@@ -9,8 +9,10 @@ bij een behavior.
 *******************************************************************************/
 #ifndef _STATE_TEMPLATE_H_
 #define _STATE_TEMPLATE_H_
+#include <ros/ros.h>
 #include <iostream>
 #include <string>
+#include "my_app/debug.h"
 
 using namespace std;
 
@@ -19,46 +21,56 @@ class state_template{
 
 public:
   typedef enum{
-    success = 0,
-    error
+    status_succes = 0,
+    status_error
     // append other errors here
-  }status;
+  }status_enum;
+
+  typedef enum{
+    execution_wait_for_start = 0,
+    execution_execute,
+    execution_exit
+    // append other errors here
+  }execution_state_enum;
 
   typedef enum{
     idle = 0,
     running,
     paused
     // append other errors here
-  }state;
+  }state_enum;
 
   typedef enum{
-    busy = 0,
-    done,
-    failed
+    outcomes_busy = 0,
+    outcomes_done,
+    outcomes_failed
     // append other outcomes here
-  }outcomes;
+  }outcomes_enum;
 
 
   typedef struct input_keys_struct{
     int dummy;
     // append other keys here
     int repeat_count; /* Example of key */
-  }input_keys_;
+  }input_keys_type;
 
   typedef struct output_keys_struct{
     int dummy;
     // append other keys here
-  }output_keys_;
+  }output_keys_type;
 
   typedef struct user_data_struct{
-    input_keys_ input_keys;
-    output_keys_ output_keys;
-  }user_data_;
+    input_keys_type input_keys;
+    output_keys_type output_keys;
+  }user_data_type;
 
 protected:
-  state  state_ = idle;
-  user_data_ user_data = {0};
+  ros::NodeHandle node_handle;
+  state_enum  state = idle;
+  user_data_type user_data;
   string state_object_name;
+  execution_state_enum execution_state_ = execution_wait_for_start;
+  outcomes_enum execution_return_value;
 
   int remaining_count;
 
@@ -70,19 +82,21 @@ public:
   ~state_template();
 
   // Starten van de state
-  status onEnter(input_keys_& input_keys);
-  // Executeren van de state, state is actief zolang outcome == busy
-  outcomes execute(void);
+  status_enum onEnter(input_keys_type& input_keys);
+  // Executeren van de state, state is actief zolang outcome == outcomes_busy
+  outcomes_enum execute(void);
+
+  outcomes_enum simpleEexecute(input_keys_type& input_keys, output_keys_type& output_keys);
   // Einde van de state
-  output_keys_ onExit(void);
+  output_keys_type onExit(void);
   // Afbeken van de state
-  status onStop(void);
+  status_enum onStop(void);
   // Tijdelijk de state stopzetten
-  status onPause(void);
+  status_enum onPause(void);
   // Voortzetten na pauze
-  status onResume(void);
+  status_enum onResume(void);
   // Stte van de toestand
-  state getState(void);
+  state_enum getState(void);
 
 };
 

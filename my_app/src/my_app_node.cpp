@@ -6,7 +6,7 @@ Date: december 2021
 Purpose:
 Voorbeeld implementation van een state machine
 *******************************************************************************/
-#include "my_app/behavior/behavior_template.h"
+#include "behaviors/include/behavior_template.h"
 
 int main(int argc, char **argv)
 {
@@ -14,21 +14,31 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "behavior_node");
   ros::NodeHandle node_handle("");
   std::cout << "my_app started" << std::endl;
-  behavior_template my_behavior("my_behavior");
+  behavior_template my_behavior("my_behavior", true);
 
-  {
-    behavior_template::input_keys_ input_key;
-    input_key.dummy = 0;
-    my_behavior.onEnter(input_key);
-  }
+  behavior_template::input_keys_type input_key;
+  input_key.dummy = 0;
+  behavior_template::output_keys_type output_key;
+
+  bool abort_flag = false;
 
   while (ros::ok())
   {
     ros::spinOnce();
-    if(my_behavior.execute()){
-      my_behavior.onExit();
-      break;
+    switch(my_behavior.simpleEexecute(input_key, output_key)){
+      case behavior_template::outcomes_busy:
+        // Do nothing
+        break;
+      case behavior_template::outcomes_finshed:
+        abort_flag = true;
+        std::cout << "my_app finished" << std::endl;
+        break;
+      case behavior_template::outcomes_failed:
+        abort_flag = true;
+        std::cout << "my_app finished with status outcomes_faild" << std::endl;
+        break;
     }
+    if(abort_flag) break;
   }
 
   return 0;
