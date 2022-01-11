@@ -8,7 +8,7 @@
     <include file="$(find my_open_manipulator_controllers)/launch/joint_trajectory_controller.launch"/>
   </group>
 
-  <!-- startup simulated world and spawn robot-->
+  <!-- startup simulated (rviz)world and spawn robot-->
   <group if="$(arg sim)">
     <include file="$(find my_open_manipulator_moveit_config)/launch/demo.launch"/>
   </group>
