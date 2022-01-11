@@ -76,6 +76,7 @@ protected:
   state_enum  state = idle;
   user_data_type user_data;
   string state_object_name;
+  bool ignore_pose;
   execution_state_enum execution_state_ = execution_wait_for_start;
   outcomes_enum execution_return_value;
   ros::ServiceClient ik_service_client;
@@ -83,7 +84,7 @@ protected:
 
 public:
   // constructor
-  state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group/* define own paramters here*/);
+  state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group, bool ignore_pose/* define own paramters here*/);
   // destructor
   ~state_ik_get_joints_from_pose();
 

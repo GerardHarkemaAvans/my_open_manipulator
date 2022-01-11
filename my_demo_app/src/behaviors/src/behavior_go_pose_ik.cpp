@@ -23,7 +23,7 @@ behavior_go_pose_ik::behavior_go_pose_ik(const std::string& behavior_object_name
   /* Write here your code */
   move_joints = new state_move_joints("move_joints", "arm");
   get_tf_transform = new state_get_tf_transform("get_tf_transform");
-  ik_get_joints_from_pose = new state_ik_get_joints_from_pose("ik_get_joints_from_pose", "arm");
+  ik_get_joints_from_pose = new state_ik_get_joints_from_pose("ik_get_joints_from_pose", "arm", true);
 
   if(!simple_execution_mode)
     state_timer = node_handle.createTimer(ros::Duration(0.100)/*100ms*/,

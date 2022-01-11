@@ -11,11 +11,13 @@ bij een behavior.
 
 #define DEBUG_ITEMS       DEBUG_NONE //| DEBUG_CUSTOM | DEBUG_STATES | DEBUG_CUSTOM
 
-state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group/* define own paramters here*/)
+state_ik_get_joints_from_pose::state_ik_get_joints_from_pose(const std::string& state_object_name, const std::string& group, bool ignore_pose/* define own paramters here*/)
 : node_handle("")
 {
   this->state_object_name = state_object_name;
   DEBUG_PRINT(DEBUG_ITEMS & DEBUG_STATES, "Entering %s::construcor\n", state_object_name.c_str());
+
+  this->ignore_pose = ignore_pose;
 
   /* Write here your code */
   ik_service_client = node_handle.serviceClient<moveit_msgs::GetPositionIK>("compute_ik");
@@ -53,7 +55,14 @@ state_ik_get_joints_from_pose::status_enum state_ik_get_joints_from_pose::onEnte
   service_request.ik_request.pose_stamped.pose.position.z += input_keys.offset;
 
   tf2::Quaternion q_orig, q_rot, q_new;
-  q_orig.setRPY( 0, 0, 0 );  // Create this quaternion from roll/pitch/yaw (in radians)
+  if(this->ignore_pose)
+    q_orig.setRPY( 0, 0, 0 );  // Create this quaternion from roll/pitch/yaw (in radians)
+  else
+    q_orig = tf2::Quaternion(service_request.ik_request.pose_stamped.pose.orientation.x,
+                             service_request.ik_request.pose_stamped.pose.orientation.y,
+                             service_request.ik_request.pose_stamped.pose.orientation.z,
+                             service_request.ik_request.pose_stamped.pose.orientation.w);
+
   q_rot.setRPY(0, input_keys.rotation, 0);
 
   q_new = q_rot * q_orig;  // Calculate the new orientation
