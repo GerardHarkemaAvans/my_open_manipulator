@@ -105,7 +105,7 @@ protected:
 
 
 public:
-  behavior_main(const std::string& state_object_name, bool simple_execution_mode);
+  behavior_main(const std::string& behavior_object_name, bool simple_execution_mode);
   ~behavior_main();
 
   status_enum onEnter(input_keys_type &input_keys);

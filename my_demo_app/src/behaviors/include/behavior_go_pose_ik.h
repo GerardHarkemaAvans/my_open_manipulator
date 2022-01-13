@@ -104,7 +104,7 @@ protected:
   std::map<std::string, double> object_pose_joints;
 
 public:
-  behavior_go_pose_ik(const std::string& state_object_name, bool simple_execution_mode);
+  behavior_go_pose_ik(const std::string& behavior_object_name, bool simple_execution_mode);
   ~behavior_go_pose_ik();
 
   status_enum onEnter(input_keys_type &input_keys);
