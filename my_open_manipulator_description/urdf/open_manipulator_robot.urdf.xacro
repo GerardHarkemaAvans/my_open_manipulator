@@ -68,5 +68,11 @@
     <child link="link1"/>
   </joint>
 
-
+  <!-- tool center point -->
+  <link name="tcp_link" />
+  <joint name="tool0_link" type="fixed">
+    <parent link="end_effector_link" />
+    <child link="tcp_link" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
 </robot>
